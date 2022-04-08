@@ -49,4 +49,3 @@ require('dotenv').config('.env');
 app.listen(PORT, () => {
   console.log(`server is port ${PORT}`);
 })
-  ;

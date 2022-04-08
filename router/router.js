@@ -14,11 +14,17 @@ Router.get('/',indexContro.index)
 Router.get('/login',indexContro.login)
 
 Router.use(multer({ dest: './data/img' }).array('username'));
+
 Router.post('/up-login',indexContro.upLogin)
+// 获取分类数据
+Router.get('/getCategory',indexContro.getCategory)
+// 修改分类 数据
+Router.get('/alterCate',indexContro.alterCate)
+// 删除 排序 分类
+Router.get('/DelCategory',indexContro.DelCategory)
 
 // 需要 验证 翻墙的路由
 Router.use(indexContro.isUsers)
-
 Router.get('/categoryAlter',indexContro.categoryAlter)
 
 module.exports = Router;

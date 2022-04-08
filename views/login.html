@@ -28,15 +28,13 @@
         let from = document.getElementById('form');
         let fromData = new FormData(from)
         console.log(fromData);
-        // if (fromData.get('username').length < 5) {
-        //     layer.msg('正确的账号长度');
-        // } else if (fromData.get('password').length < 5) {
-        //     layer.msg('正确的密码长度');
-        // }else{
+        if (fromData.get('username').length < 5) {
+            layer.msg('正确的账号长度');
+        } else if (fromData.get('password').length < 5) {
+            layer.msg('正确的密码长度');
+        }else{
             return true;
-        // }
-
-      
+        }
         return false;
     });
 </script>

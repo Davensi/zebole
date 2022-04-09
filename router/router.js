@@ -1,7 +1,9 @@
 
 const express = require('express');
 const Router = express.Router();
+
 const indexContro = require('../control/indexContro');
+const cateContro = require('../control/cateContro');
 const multer = require('multer')
 // console.log(indexContro);
 
@@ -22,6 +24,14 @@ Router.get('/getCategory',indexContro.getCategory)
 Router.get('/alterCate',indexContro.alterCate)
 // 删除 排序 分类
 Router.get('/DelCategory',indexContro.DelCategory)
+// 文章列表页
+Router.get('/article',indexContro.article)
+// 添加文章分类 页
+Router.get('/addArticle',indexContro.addArticle)
+// 添加文章 接口
+Router.post('/upArticle',indexContro.upArticle)
+// 文章分类 搜索
+Router.get('/inCate',cateContro.inCate)
 
 // 需要 验证 翻墙的路由
 Router.use(indexContro.isUsers)

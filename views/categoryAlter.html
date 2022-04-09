@@ -18,10 +18,14 @@
     <div class="layui-body">
       <!-- 内容主体区域 -->
       <div style="padding: 15px;">
-
+        <div class="demoTable">
+          搜索ID：
+          <div class="layui-inline">
+            <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+          </div>
+          <button class="layui-btn" data-type="reload">搜索</button>
+        </div>
         分类排序区域.
-
-
         <table class="layui-hide" id="test" lay-filter="test"></table>
 
       </div>
@@ -32,22 +36,27 @@
       底部固定区域
     </div>
   </div>
+
+
+
   <!-- toot -->
+  <!-- 单元格工具 -->
   <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
     <button class="layui-btn layui-btn-sm" lay-event="getCheckData">选中条目</button>
     <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
     <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    <button class="layui-btn layui-btn-sm" lay-event="addTiem">添加一个数据</button>
   </div>
-  <!-- 单元格工具 -->
+  
 </script>
-
+  <!-- 删除工具 -->
   <script type="text/html" id="barDemo">
-
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
   <script src="/static/layui/layui.js"></script>
+
   <script>
     // JS 
     layui.use(['element', 'layer', 'util'], function () {
@@ -77,6 +86,8 @@
 
     });
   </script>
+
+
   <script>
     layui.use('table', function () {
       var table = layui.table, $ = layui.$;
@@ -96,7 +107,7 @@
           , { field: 'cate_id', title: '序号', width: 80, fixed: 'left', unresize: true, sort: true }
           , {
             field: 'cate_name', title: '名字', width: 200, edit: 'text', templet: function (res) {
-               
+
               return '<em>' + res.cate_name + '</em>';
             }
           }
@@ -107,7 +118,32 @@
         ]]
         , page: true
       });
+      let active = {
+        reload: function () {
+          var demoReload = $('#demoReload');
+          console.log(demoReload.val());
+          //执行重载
+          table.reload('test', {
+            url:"/inCate",
+            page: {
+              curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+              'cate_id':  demoReload.val(),
+              // key: {
+              //   id: demoReload.val()
+              // }
+            }
+          });
+        }
+      };
 
+
+      $('.demoTable .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+        console.log(active,'active');
+      });
       //头工具栏事件
       table.on('toolbar(test)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
@@ -147,6 +183,9 @@
             break;
 
           //自定义头工具栏右侧图标 - 提示
+          case 'addTiem':
+            layer.alert('这是工具栏右侧自定义的一个图标按钮');
+            break;
           case 'LAYTABLE_TIPS':
             layer.alert('这是工具栏右侧自定义的一个图标按钮');
             break;
@@ -158,23 +197,24 @@
         var data = obj.data;
         let id = data.cate_id;
 
-
         if (obj.event === 'del') {
           layer.confirm('真的删除行么', function (index) {
             obj.del();
             $.get('/DelCategory', { id }).then(res => { console.log(res); })
+            table.reload('test')
             layer.close(index);
           });
         }
       });
       // 单元格编辑
       table.on('edit(test)', function (obj) {
-        let { data, value ,field} = obj;
+        let { data, value, field } = obj;
         let { cate_id, } = data;
         console.log(obj);
-        console.log(cate_id ,'id');
-        $.get('/alterCate', { cate_id,value }).then(res => { console.log(res); })
-        layer.msg('[ID: ' + cate_id + '] '+ field + ' 字段更改值为：'+ value );
+        console.log(cate_id, 'id');
+        $.get('/alterCate', { cate_id, value }).then(res => { console.log(res); })
+        layer.msg('[ID: ' + cate_id + '] ' + field + ' 字段更改值为：' + value);
+
       });
     });
 

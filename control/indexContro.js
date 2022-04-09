@@ -12,34 +12,58 @@ const viewPath = _path => path.join(path.dirname(__dirname), '/views/', _path);
 
 console.log(viewPath('index.html'));
 
+// 首页
 indexContro.index = (req, res) => {
        res.render(('index.html'))
 }
+// 登录页
 indexContro.login = (req, res) => {
        res.sendFile(viewPath('login.html'))
 };
-
+// article 列表页
+indexContro.article = (req, res) => {
+       res.render(('articleList.html'))
+}
 // 跳转后台管理页
 indexContro.upLogin = async (req, res) => {
        log(req.body, 'body');
        let { username, password } = req.body;
        log('跳转');
        const sqlStr = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
-       let data = await query(sqlStr)
+       let data = await query(sqlStr);
+       log(data, 'data')
        if (data.length === 0) {
-              res.send(`
-       <script>
-             console.log(99)
-             alert('密码错误')
-             location.href='login'
-       </script>
-       `)
-       }
-       req.session.userInfo = req.body;
-       userInfo = req.session.userInfo;
-       res.redirect('/');
+              res.json({
+                     err: 0,
+                     msg: "账号密码错误请重试"
+              })
+       } else {
+
+              req.session.userInfo = req.body;
+              userInfo = req.session.userInfo;
+              // res.redirect('/');
+              res.json({
+                     err: 1,
+                     msg: "user"
+              })
+       };
+
 };
 
+// addArticle 添加分类
+indexContro.addArticle = async (req, res) => {
+       res.render(('addArticle.html'))
+}
+// upArticle 添加 文章分类 sql
+indexContro.upArticle = async (req, res) => {
+       let { title, status, orderBy } = req.body;
+       log(req.body, 'body')
+       const sqlStr = `insert into category (cate_name,status,orderBy)  values ('${title}',${status},${orderBy})`;
+       let data = await query(sqlStr);
+
+
+       res.json({ code: 0 })
+}
 // 获取数据 分类页
 indexContro.getCategory = async (req, res) => {
        const sqlStr = `SELECT * FROM category WHERE status = 0`;
@@ -64,7 +88,7 @@ indexContro.DelCategory = async (req, res) => {
        const sqlStr = `UPDATE category SET status = 1  WHERE cate_id = ${id}`;
        let data = await query(sqlStr);
        log(data, 'data')
-       rows(data,res)
+       rows(data, res)
 }
 // alterCate 更改 分类 值
 indexContro.alterCate = async (req, res) => {
@@ -73,8 +97,20 @@ indexContro.alterCate = async (req, res) => {
        let data = await query(sqlStr);
        log(data, 'data')
        // 判断 操作 是否成功
-       rows(data,res)
-      
+       rows(data, res)
+
+}
+// 获取 bookList 数据
+indexContro.articleList = async (req, res) => {
+       const sqlStr = `SELECT * FROM article  WHERE status = 0`;
+       let data = await query(sqlStr);
+       let obj = {
+              data,
+              "code": 0,
+              "msg": "",
+              "count": data.length,
+       }
+       res.json(obj)
 }
 //   验证是否翻墙的路由
 // session

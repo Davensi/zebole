@@ -127,6 +127,10 @@ body {
 form {
     margin: 20px 0;
 }
+#form {
+    margin: 20px 0;
+    position: relative;
+}
 
 .login {
     position: absolute;
@@ -164,4 +168,24 @@ input {
 
 input:focus {
     box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+#pt-vary{
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    background-size: 100%;
+    border-radius: 24%;
+    top: 55px ;
+    right:-40px;
+}
+.p-dv{
+    
+    background: url('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.51yuansu.com%2Fpic2%2Fcover%2F00%2F44%2F16%2F5813af950acf0_610.jpg&refer=http%3A%2F%2Fpic.51yuansu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652059705&t=84fdd5063690af0cd103d907a14a6ac3'),no-repeat;
+   
+}
+.t-dv{
+    
+    background: url('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.51yuansu.com%2Fpic2%2Fcover%2F00%2F43%2F63%2F581373627e8b9_610.jpg&refer=http%3A%2F%2Fpic.51yuansu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652059871&t=dbc50df15be4a5b109952237217dbfc4'),no-repeat;
+     
 }

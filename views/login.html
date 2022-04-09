@@ -13,30 +13,76 @@
 <body>
     <div class="login">
         <h1>文西后台登录</h1>
-        <form action="/up-login" method="post" id="form">
+        <form action="/" method="post" id="form">
             <input type="text" name="username" placeholder="Username" />
             <input type="password" name="password" placeholder="Password" />
+            <p id="pt-vary" class="p-dv"></p>
             <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-large">Login In</button>
         </form>
     </div>
+
+    <form action="/" style="display: none;">
+        <button id="show-btn"></button>
+    </form>
 </body>
 <script src="/static/jquery.min.js"></script>
 <script src="/static/layui/layui.js"></script>
 <script>
+
     $("#loginBtn").on('click', () => {
+        let userReg = /^[a-zA-z]+[\w]{4,12}$/g;
+        let passwordTestReg = /[\S]{6,16}/;
         // layer.msg('login');
-        let from = document.getElementById('form');
-        let fromData = new FormData(from)
-        console.log(fromData);
-        if (fromData.get('username').length < 5) {
-            layer.msg('正确的账号长度');
-        } else if (fromData.get('password').length < 5) {
-            layer.msg('正确的密码长度');
-        }else{
-            return true;
+        let form = document.getElementById('form');
+        let formData = new FormData(form)
+        console.log(formData);
+        let msg = false;
+        if (!userReg.test(formData.get('username'))) {
+            layer.msg('正确的账号格式');
+
+        } else if (!passwordTestReg.test(formData.get('password'))) {
+            layer.msg('正确的密码格式');
+        } else {
+            $.ajax({
+                type: "post",
+                url: "/up-login",
+                processData: false, //  jquery不需要处理数据
+                contentType: false, // 不要设置编码 
+                data: formData,
+                // 数据类型 json
+                dataType: 'json',
+            }).then(res => {
+                console.log(res)
+
+                // 判断密码是否校验成功
+                if (res.err === 1) {
+                    $('#show-btn').click()
+                }
+                layer.msg(res.msg);
+            })
+
         }
+
+
         return false;
     });
+
+    let vary = 0;
+    // 小眼睛 事件
+    $('#pt-vary').click(function () {
+      
+        if (vary === 0) {
+             
+            $(this)[0].className = ('t-dv');
+            $('input[name=password]').attr('type','text')
+            vary = 1;
+        } else {
+            $(this)[0].className = ('p-dv')
+            $('input[name=password]').attr('type','password')
+            vary = 0;
+        }
+
+    })
 </script>
 
 </html>

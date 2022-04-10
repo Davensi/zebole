@@ -14,7 +14,7 @@ const app = express();
 // 挂载
 app.use('/static', express.static('static/'));
 // 配置一个  session 
-// 解析post参数
+// 解析post参数;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 

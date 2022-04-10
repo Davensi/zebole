@@ -1,5 +1,5 @@
 <div class="layui-header">
-  <div class="layui-logo layui-hide-xs layui-bg-black">小猪博客管理系统</div>
+  <div class="layui-logo layui-hide-xs layui-bg-black">{{logTest}}</div>
   <!-- 头部区域（可配合layui 已有的水平导航） -->
   <ul class="layui-nav layui-layout-left">
     <!-- 移动端显示 -->
@@ -7,8 +7,8 @@
       <i class="layui-icon layui-icon-spread-left"></i>
     </li>
 
-    <li class="layui-nav-item layui-hide-xs"><a href="/addArticle">添加分类</a></li>
-    <li class="layui-nav-item layui-hide-xs"><a href="">添加文章</a></li>
+    <li class="layui-nav-item layui-hide-xs"><a href="/addArticle">添加文章分类</a></li>
+    <li class="layui-nav-item layui-hide-xs"><a href="/addSystem">添加配置参数</a></li>
     <li class="layui-nav-item layui-hide-xs"><a href="">nav 3</a></li>
     <li class="layui-nav-item">
       <a href="javascript:;">nav groups</a>
@@ -47,8 +47,6 @@
     
     localStorage.setItem('logTete', '本作博客后台管理')
   }
-  document.getElementsByClassName('layui-logo')[0].innerHTML = logText;
-
-
+  // document.getElementsByClassName('layui-logo')[0].innerHTML = logText;
 
 </script>

@@ -11,9 +11,11 @@ async function templateViews(res, _path, data) {
         obj[name] = val;
 
     });
-    // console.log(obj, 'obj');
-    // console.log(bear, 'data');
-    res.render(_path,obj)
+     
+    setTimeout(()=>{
+        res.render(_path,obj)
+    },10)
+    
 }
 
 module.exports = templateViews;

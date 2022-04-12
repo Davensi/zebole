@@ -38,9 +38,8 @@ cateContro.DelCategory = async (req, res) => {
 }
 // 获取分类页数据
 cateContro.getCategory = async (req, res) => {
-    const sqlStr = `SELECT * FROM category WHERE status = 0`;
+    const sqlStr = `SELECT * FROM category WHERE status = 0 limit 10`;
     let data = await query(sqlStr);
-
     if (data) {
 
     }
@@ -77,6 +76,12 @@ cateContro.upCate = async (req, res) => {
 
 
     res.json({ code: 0 })
+}
+
+// addArticle 添加分类页
+cateContro.addArticle = async (req, res) => {
+    // res.render(('addArticle.html'))
+    templateViews(res,'addArticle.html')
 }
 // cateContro
 module.exports = cateContro;

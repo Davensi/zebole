@@ -27,6 +27,7 @@
 </body>
 <script src="/static/jquery.min.js"></script>
 <script src="/static/layui/layui.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/js-cookie/3.0.1/js.cookie.js"></script>
 <script>
 
     $("#loginBtn").on('click', () => {
@@ -52,12 +53,15 @@
                 // 数据类型 json
                 dataType: 'json',
             }).then(res => {
-                console.log(res)
-
-                // 判断密码是否校验成功
+                
+                // localStorage.setItem(JSON.stringify(res))
+                // 判断密码是否校验成功 成功 后将 信息存储到 
                 if (res.err === 1) {
-                    $('#show-btn').click()
-                }
+                    
+                    Cookies.set('userInfo',JSON.stringify(res.dataS), { expires: 1, path: '/' })
+
+                    location.href = '/'
+                };
                 layer.msg(res.msg);
             })
 
@@ -70,15 +74,15 @@
     let vary = 0;
     // 小眼睛 事件
     $('#pt-vary').click(function () {
-      
+
         if (vary === 0) {
-             
+
             $(this)[0].className = ('t-dv');
-            $('input[name=password]').attr('type','text')
+            $('input[name=password]').attr('type', 'text')
             vary = 1;
         } else {
             $(this)[0].className = ('p-dv')
-            $('input[name=password]').attr('type','password')
+            $('input[name=password]').attr('type', 'password')
             vary = 0;
         }
 

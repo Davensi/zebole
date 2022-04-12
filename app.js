@@ -8,15 +8,14 @@ const path = require('path');
 const session = require('express-session')
 const artTemplate = require('art-template');
 const express_template = require('express-art-template');
-// git reset cbf505  $ git commit -am '完成博客基本搭建'
-
+ 
+ 
 const app = express();
-// 挂载
+// 托管静态 资源 
 app.use('/static', express.static('static/'));
+// 
+ 
 // 配置一个  session 
-// 解析post参数;
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
 
 
 // 配置模板的路径
@@ -35,7 +34,7 @@ app.use(session({
     // 访问路径
     path: "/",
     // 设置 cookie 能不能 被客户端获取 默认为 true
-    httpOnly: true,
+    httpOnly: false,
     // 放置 毫秒值  设置时间为 十分钟 当十分钟没访问 就过期 没过期访问再次刷新为 十分钟
     maxAge: 60000 * 60,
   }
@@ -48,4 +47,4 @@ require('dotenv').config('.env');
 
 app.listen(PORT, () => {
   console.log(`server is port ${PORT}`);
-})
+});

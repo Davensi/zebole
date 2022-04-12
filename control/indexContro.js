@@ -16,29 +16,59 @@ console.log(viewPath('index.html'));
 
 // 首页
 indexContro.index = (req, res) => {
-       templateViews(res,'index.html')
+       templateViews(res, 'index.html')
 }
-// 登录页
- 
-// article 列表页
+
+// article  列表页
 indexContro.article = (req, res) => {
        // res.render(('articleList.html'))
-       templateViews(res,'articleList.html')
+       templateViews(res, 'articleList.html')
 }
-// 跳转后台管理页
-
-// addArticle 添加分类
-indexContro.addArticle = async (req, res) => {
-       // res.render(('addArticle.html'))
-       templateViews(res,'addArticle.html')
+indexContro.editArticle = (req, res) => {
+       // res.render(('articleList.html'))
+       templateViews(res, 'editArticle.html')
 }
-// upArticle 添加 文章分类 sql
 
- 
+// 删除 文章接口
+indexContro.DelArticle = async (req, res) => {
 
-// 获取 bookList 数据
-indexContro.articleList = async (req, res) => {
-       const sqlStr = `SELECT * FROM article  WHERE status = 0`;
+       let { id } = req.query;
+       //  console.log('删除',id);
+       // 等待处理 sql 语句
+       res.send('yes')
+}
+
+//  更改 文章 接口
+indexContro.alterArticle = async (req, res) => {
+
+       let { add_date, author, cate_id, content, pic, status, title, alter_id, imgSrc } = req.body;
+
+       // 等待处理 sql 语句
+       // 判断是否 更改了图片
+       if (req.files) {
+              console.log('传了');
+              let { originalname, filename, destination } = req.files;
+              // 重命名文件
+              fs.rename(path.join(`${imgDirname}/${filename}`), path.join(`${imgDirname}/${originalname}`), (err) => {
+                     if (err) console.log(err, 'on');
+                     console.log('ok');
+              });
+       }
+       console.log(imgSrc, 'imgSrc');
+       // if(){
+
+       // }
+       res.send('yes')
+}
+
+// 获取 rticle 数据
+indexContro.getArticle = async (req, res) => {
+
+       let sqlStr = `SELECT * FROM article `;
+       if (req.query?.id) {
+              sqlStr = `SELECT * FROM article where id = ${req.query.id}`;
+       }
+
        let data = await query(sqlStr);
        let obj = {
               data,
@@ -50,13 +80,26 @@ indexContro.articleList = async (req, res) => {
 }
 //   验证是否翻墙的路由
 // session
-indexContro.isUsers = (req, res, next) => {
-       if (req.session.userInfo !== '') {
-              next();
-       } else {
-              res.redirect('/login');
-       }
+indexContro.isUsers =  (req, res, next) => {
+              // let _path = ['/up-login', '/login'];
+              // let { url } = req;
+              // log(url, 'path');
+              // if (_path.includes(url)) {
+              //        //     log('无需验证');
+                     next();
+              // } else {
+
+              //        if (req.session.userInfo) {
+              //               //  log('有凭证')
+              //               next();
+              //        } else {
+              //               res.redirect('/login');
+              //        }
+              // }
+
+
+
 }
-// 分类修页
+
 
 module.exports = indexContro;

@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>德德后台管理系统</title>
     <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        .box {
+            height: 100;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,92 +24,193 @@
             <!-- 内容主体区域 -->
             <div style="padding: 15px;">
                 <h1>文章分类编辑</h1>
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
-                    <legend>动态操作Tab</legend>
-                </fieldset>
-                <div class="layui-tab" lay-filter="demo" lay-allowclose="true">
-                    <ul class="layui-tab-title">
-                        <li class="layui-this" lay-id="11">网站设置</li>
-                        <li lay-id="22">用户管理</li>
-                        <li lay-id="33">权限分配</li>
-                        <li lay-id="44">商品管理</li>
-                        <li lay-id="55">订单管理</li>
-                    </ul>
-                    <div class="layui-tab-content">
-                        <div class="layui-tab-item layui-show">内容1</div>
-                        <div class="layui-tab-item">内容2</div>
-                        <div class="layui-tab-item">内容3</div>
-                        <div class="layui-tab-item">内容4</div>
-                        <div class="layui-tab-item">内容5</div>
+                <div class="demoTable">
+                    搜索：
+                    <div class="layui-inline">
+                        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
                     </div>
+                    <button class="layui-btn" data-type="reload">搜索</button>
                 </div>
-                <div class="site-demo-button" style="margin-bottom: 0;">
-                    <button class="layui-btn site-demo-active" data-type="tabAdd">新增Tab项</button>
-                    <button class="layui-btn site-demo-active" data-type="tabDelete">删除：商品管理</button>
-                    <button class="layui-btn site-demo-active" data-type="tabChange">切换到：用户管理</button>
-                </div>
-
-                <!--  -->
+                分类排序区域.
                 <table class="layui-hide" id="test" lay-filter="test"></table>
-                <!--  -->
             </div>
         </div>
-        <script type="text/html" id="barDemo">
-            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-        </script>
+
 
         <div class="layui-footer">
             <!-- 底部固定区域 -->
             底部固定区域
         </div>
     </div>
-    <!-- toot -->
 
+    <!-- 单元格工具 -->
+    <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+      <button class="layui-btn layui-btn-sm" lay-event="getCheckData">选中条目</button>
+      <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+      <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+      <button class="layui-btn layui-btn-sm" lay-event="addTiem">添加文章</a> </button>
+    </div>
+    <div id="titleTpl">
+        <b></b>
+    </div>
+  </script>
+    <!-- toot -->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      </script>
 
     <script src="/static/layui/layui.js"></script>
     <script>
-        layui.use('element', function () {
-            var $ = layui.jquery
-                , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        // JS 
+        layui.use(['element', 'layer', 'util'], function () {
+            var element = layui.element
+                , layer = layui.layer
+                , util = layui.util
+                ;
 
-            //触发事件
-            var active = {
-                tabAdd: function () {
-                    //新增一个Tab项
-                    element.tabAdd('demo', {
-                        title: '新选项' + (Math.random() * 1000 | 0) //用于演示
-                        , content: '内容' + (Math.random() * 1000 | 0)
-                        , id: new Date().getTime() //实际使用一般是规定好的id，这里以时间戳模拟下
-                    })
+            //头部事件
+            util.event('lay-header-event', {
+                //左侧菜单事件
+                menuLeft: function (othis) {
+                    layer.msg('展开左侧菜单的操作111', { icon: 0 });
                 }
-                , tabDelete: function (othis) {
-                    //删除指定Tab项
-                    element.tabDelete('demo', '44'); //删除：“商品管理”
-
-
-                    othis.addClass('layui-btn-disabled');
+                , menuRight: function () {
+                    layer.open({
+                        type: 1
+                        , content: '<div style="padding: 15px;">处理右侧面板的操作234</div>'
+                        , area: ['260px', '100%']
+                        , offset: 'rt' //右上角
+                        , anim: 5
+                        , shadeClose: true
+                    });
                 }
-                , tabChange: function () {
-                    //切换到指定Tab项
-                    element.tabChange('demo', '22'); //切换到：用户管理
+            });
+
+
+        });
+    </script>
+    <script>
+        layui.use('table', function () {
+            var table = layui.table, $ = layui.$;
+
+            table.render({
+                elem: '#test'
+                , url: '/getArticle'
+                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                    title: '提示'
+                    , layEvent: 'LAYTABLE_TIPS'
+                    , icon: 'layui-icon-tips'
+                }]
+                , title: '用户数据表'
+                , cols: [[
+                    { type: 'checkbox', fixed: 'left' }
+                    , { field: 'id', title: '序号', width: 80, fixed: 'left', unresize: true, sort: true }
+                    , {
+                        field: 'title', title: '标题', width: 200, edit: 'text', templet: function (res) {
+                            return '<em>' + res.title + '</em>';
+                        }
+                    }
+                    , { field: 'content', title: '内容', width: 120, edit: 'false', }
+                    , { field: 'author', title: '所属用户ID', width: 120, edit: 'false', }
+                    , { field: 'status', title: '状态', width: 120, edit: 'false', }
+                    , { field: 'add_date', title: '添加日期', width: 120, edit: 'false', }
+                    , {
+                        field: 'pic', title: '封面', width: 120, style:'height: 50px', templet: function (res) {
+                            return `<img src="${res.pic}" alt="">`;
+                        }, edit: 'false',
+                    }
+                    , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+
+
+                ]]
+                , page: true
+            });
+            let active = {
+                reload: function () {
+                    var demoReload = $('#demoReload');
+                    console.log(demoReload.val());
+                    //执行重载
+                    table.reload('test', {
+                        url: "/inCate",
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        , where: {
+                            'cate_id': demoReload.val(),
+
+                        }
+                    });
                 }
             };
 
-            $('.site-demo-active').on('click', function () {
-                var othis = $(this), type = othis.data('type');
-                active[type] ? active[type].call(this, othis) : '';
+
+            $('.demoTable .layui-btn').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+                console.log(active, 'active');
+            });
+            //头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'getCheckData':
+                       
+                        // $.get('/DelCategoryu', { resObj }).then(res => { console.log(res); })
+                        layer.alert(JSON.stringify('data') + '是否删除');
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：' + data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                        break;
+
+                    //自定义头工具栏右侧图标 - 提示
+                    case 'addTiem':
+                        layer.msg('追加配置');
+                        location.href = '/editArticle'
+                        break;
+                    case 'LAYTABLE_TIPS':
+                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                        break;
+                };
             });
 
-            // Hash地址的定位
-            var layid = location.hash.replace(/^#test=/, '');
-            element.tabChange('test', layid);
-
-            element.on('tab(test)', function (elem) {
-                location.hash = 'test=' + $(this).attr('lay-id');
+            // 监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                let id = data.id;
+                // edit
+                if (obj.event === 'del') {
+                    layer.confirm('真的删除行么'+id, function (index) {
+                        obj.del();
+                        $.get('/DelArticle', {id }).then(res => { console.log(res); })
+                        table.reload('test')
+                        layer.close(index);
+                    });
+                }else if(obj.event === 'edit'){
+                    console.log(obj,id);
+                    // $.get(`/editArticle?${id}`)
+                    location.href=`/editArticle?id=${id}`
+                }
             });
+            // 单元格编辑
+            table.on('edit(test)', function (obj) {
+                let { data, value, field } = obj;
+                let { cate_id, } = data;
+                console.log(obj);
+                console.log(cate_id, 'id');
+                $.get('/alterCate', { cate_id, value }).then(res => { console.log(res); })
+                layer.msg('[ID: ' + cate_id + '] ' + field + ' 字段更改值为：' + value);
 
+            });
         });
+
+
     </script>
 </body>
 

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <style>
+        #demo1 {
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>文章编辑页</h1>
+    <div class="layui-layout layui-layout-admin">
+        <!-- 抽离子摸版 -->
+        {{ include "./common/hader.html" }}
+        <!-- 抽离子摸版 -->
+        {{ include "./common/sideLeft.html" }}
+
+        <div class="layui-body">
+
+            <div style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="layui-form">
+
+
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-inline">
+                                <input type="tel" name="title" lay-verify="title" autocomplete="off"
+                                    class="layui-input">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">所属用户ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="author" lay-verify="required|author" autocomplete="off"
+                                    class="layui-input">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">日期</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="add_date" id="date" lay-verify="add_date"
+                                    placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">内容</label>
+                        <div class="layui-input-block">
+                            <input type="file" name="file" lay-verify="file" autocomplete="off"
+                                onchange="fileChange(this,'#demo1')">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">内容</label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入内容" class="layui-textarea" name="content"
+                                lay-verify="content"></textarea>
+                        </div>
+                        <img class="layui-upload-img" id="demo1">
+                    </div>
+
+
+
+                    <a name="list-progress"> </a>
+
+
+
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">该文章状态</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="status" lay-skin="switch" lay-text="通过|待审核">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            底部固定区域
+        </div>
+    </div>
+
+</body>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/jquery.min.js"></script>
+<script>
+
+   
+    layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , upload = layui.upload
+            , $ = layui.jquery;
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+
+        //表单赋值
+        // 原图片的src
+        let imgSrc;
+        // 要修改的 id
+        let _id;
+        async function getArticle() {
+
+            var url = decodeURI(window.location.href);
+            var args = url.split('?');
+            if (args[0] === url) return false;
+            var arr = args[1].split('&');
+            var obj = {};
+            for (var i = 0; i < arr.length; i++) {
+                var arg = arr[i].split('=');
+                obj[arg[0]] = arg[1];
+
+            }
+            let { id } = obj;
+            console.log(obj, 'id');
+            let res = await $.get(`/getArticle?id=${id}`);
+            let { data } = res;
+            console.log(data, 'data');
+
+            let { add_date, author, cate_id, content, pic, status, title, id: alter_id } = data[0];
+            // 数据 回显
+            $('#demo1').attr('src', pic)
+            form.val('layui-form', {
+                "title": title, // "name": "value"
+                "add_date": add_date,
+                "author": author,
+                "cate_id": cate_id,
+                "content": content,
+                "status": status,
+            });
+            imgSrc = pic;
+            _id = alter_id;
+            // return pic;
+        };
+
+        getArticle();
+        setTimeout(() => {
+            console.log(imgSrc, 'src');
+            console.log(_id, 'id');
+        }, 50)
+
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length < 2) {
+                    return '标题至少得2个字符啊';
+                }
+            }
+            , author: [
+                /^[0-9]{1,12}$/
+                , '所属用户ID必须是数字'
+            ]
+            , content: function (value) {
+                if (value.length < 1) {
+                    return '内容请不要为空';
+                }
+            }
+        });
+
+
+        // 常规使用 - 普通图片上传 图片 上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '/option' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
+            // , auto: false //选择文件后不自动上传
+            , bindAction: '#demo1' // 指向一个按钮触发上传
+            , before: function (obj) {
+                // 预读本地文件示例，不支持 ie8
+                obj.preview(function (index, file, result) {
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                //上传成功的一些操作
+                console.log('成功000');
+                //……
+                $('#demoText').html(''); //置空上传失败的状态
+            }
+            , error: function (res) {
+                // 演示失败状态，并实现重传
+                // var demoText = $('#demoText');
+                // demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                // demoText.find('.demo-reload').on('click', function () {
+                //     uploadInst.upload();
+                // });
+                console.log('成功000', res);
+            }
+            //进度条
+
+        });
+
+       
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            console.log(data.field, 'data');
+            console.log(data.field?.status, '是否有');
+            let formData = new FormData($(".layui-form")[0]);
+            formData.append('imgSrc', imgSrc);
+            formData.append('id', _id);
+            console.dir($('input[name=file]')[0]);
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            });
+            $.ajax({
+                url: '/alterArticle',
+                processData: false, //  jquery不需要处理数据
+                contentType: false, // 不要设置编码
+                type: "post",
+                data: formData,
+            })
+            return false;
+        });
+
+        //表单取值
+        // layui.$('#LAY-component-form-getval').on('click', function () {
+        //     var data = form.val('example');
+        //     alert(JSON.stringify(data));
+        // });
+
+    });
+</script>
+
+</html>

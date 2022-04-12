@@ -1,92 +1,179 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/static/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/css/login.css">
+    <meta charset="utf-8">
+    <title>登录注册忘记密码页面</title>
+    <link rel="stylesheet" href="https://www.jq22.com/demo/jqueryzcdl202110260028/css/normalize.min.css">
+    <link rel="stylesheet" href="https://www.jq22.com/demo/jqueryzcdl202110260028/css/style.css">
 </head>
 
 <body>
-    <div class="login">
-        <h1>文西后台登录</h1>
-        <form action="/" method="post" id="form">
-            <input type="text" name="username" placeholder="Username" />
-            <input type="password" name="password" placeholder="Password" />
-            <p id="pt-vary" class="p-dv"></p>
-            <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-large">Login In</button>
-        </form>
+    <div id="formContainer" class="dwo">
+        <div class="formLeft">
+            <img src="../static/log.webp">
+        </div>
+        <div class="formRight">
+            <!-- Forgot password form -->
+            <form id="forgot" class="otherForm">
+                <header>
+                    <h1>忘记密码</h1>
+                    <p>输入邮箱找回密码</p>
+                </header>
+                <section>
+                    <label>
+                        <p>邮箱</p>
+                        <input type="email" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <button type="submit">发送邮件</button>
+                </section>
+                <footer>
+                    <button type="button" class="forgotBtn">返回</button>
+                </footer>
+            </form>
+
+            <!-- Login form -->
+            <form id="login" action="/" method="post" id="form">
+                <header>
+                    <h1>欢迎回来</h1>
+                    <p>请先登录</p>
+                </header>
+                <section>
+                    <label>
+                        <p>用户名</p>
+                        <input type="text" placeholder="Username" value="admin" name="username"
+                            placeholder="Username" />
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>密码</p>
+                        <input type="password" type="password" name="password" placeholder="Password">
+                        <div class="border"></div>
+                    </label>
+                    <button  type="submit" id="loginBtn">登 录</button>
+                </section>
+                <footer>
+                    <button type="button" class="forgotBtn">忘记密码？</button>
+                    <button type="button" class="registerBtn">新用户？</button>
+                </footer>
+            </form>
+
+            <!-- Register form -->
+            <form id="register" class="otherForm">
+                <header>
+                    <h1>用户注册</h1>
+                    <p>注册后享受更多服务</p>
+                </header>
+                <section>
+                    <label>
+                        <p>用户名</p>
+                        <input type="text" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>邮箱</p>
+                        <input type="email" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>密码</p>
+                        <input type="password" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>重复密码</p>
+                        <input type="password" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <button type="submit">注 册</button>
+                </section>
+                <footer>
+                    <button type="button" class="registerBtn">返回</button>
+                </footer>
+            </form>
+        </div>
     </div>
 
-    <form action="/" style="display: none;">
-        <button id="show-btn"></button>
-    </form>
 </body>
-<script src="/static/jquery.min.js"></script>
+
+
 <script src="/static/layui/layui.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/js-cookie/3.0.1/js.cookie.js"></script>
+<script src="/static/jquery.min.js"></script>
 <script>
+    // var form = layui.form
+    //             , layer = layui.layer
+    //             , layedit = layui.layedit
+    //             , laydate = layui.laydate
+    //             , $ = layui.jquery;
+    $(function () {
+        $('.forgotBtn').click(function () {
+            $('#forgot').toggleClass('toggle')
+        })
 
-    $("#loginBtn").on('click', () => {
-        let userReg = /^[a-zA-z]+[\w]{4,12}$/g;
-        let passwordTestReg = /[\S]{6,16}/;
-        // layer.msg('login');
-        let form = document.getElementById('form');
-        let formData = new FormData(form)
-        console.log(formData);
-        let msg = false;
-        if (!userReg.test(formData.get('username'))) {
-            layer.msg('正确的账号格式');
-
-        } else if (!passwordTestReg.test(formData.get('password'))) {
-            layer.msg('正确的密码格式');
-        } else {
-            $.ajax({
-                type: "post",
-                url: "/up-login",
-                processData: false, //  jquery不需要处理数据
-                contentType: false, // 不要设置编码 
-                data: formData,
-                // 数据类型 json
-                dataType: 'json',
-            }).then(res => {
-                
-                // localStorage.setItem(JSON.stringify(res))
-                // 判断密码是否校验成功 成功 后将 信息存储到 
-                if (res.err === 1) {
-                    
-                    Cookies.set('userInfo',JSON.stringify(res.dataS), { expires: 1, path: '/' })
-
-                    location.href = '/'
-                };
-                layer.msg(res.msg);
-            })
-
-        }
-
-
-        return false;
+        $('.registerBtn').click(function () {
+            $('#register, #formContainer').toggleClass('toggle')
+        })
     });
 
-    let vary = 0;
-    // 小眼睛 事件
-    $('#pt-vary').click(function () {
 
-        if (vary === 0) {
+    $("#loginBtn").on('click', () => {
+    let userReg = /^[a-zA-z]+[\w]{4,12}$/g;
+    let passwordTestReg = /[\S]{6,16}/;
+    // layer.msg('login');
+    let form = document.getElementById('login');
+    let formData = new FormData(form)
+    console.log(formData);
+    let msg = false;
+    if (!userReg.test(formData.get('username'))) {
+        layer.msg('正确的账号格式');
 
-            $(this)[0].className = ('t-dv');
-            $('input[name=password]').attr('type', 'text')
-            vary = 1;
-        } else {
-            $(this)[0].className = ('p-dv')
-            $('input[name=password]').attr('type', 'password')
-            vary = 0;
-        }
+    } else if (!passwordTestReg.test(formData.get('password'))) {
+        layer.msg('正确的密码格式');
+    } else {
+        $.ajax({
+            type: "post",
+            url: "/up-login",
+            processData: false, //  jquery不需要处理数据
+            contentType: false, // 不要设置编码 
+            data: formData,
+            // 数据类型 json
+            dataType: 'json',
+        }).then(res => {
+            
+            // localStorage.setItem(JSON.stringify(res))
+            // 判断密码是否校验成功 成功 后将 信息存储到 
+            if (res.err === 1) {
+                
+                Cookies.set('userInfo',JSON.stringify(res.dataS), { expires: 1, path: '/' })
 
-    })
+                location.href = '/'
+            };
+            layer.msg(res.msg);
+        })
+
+    }
+
+    return false;
+});
+
+let vary = 0;
+// 小眼睛 事件
+$('#pt-vary').click(function () {
+
+    if (vary === 0) {
+
+        $(this)[0].className = ('t-dv');
+        $('input[name=password]').attr('type', 'text')
+        vary = 1;
+    } else {
+        $(this)[0].className = ('p-dv')
+        $('input[name=password]').attr('type', 'password')
+        vary = 0;
+    }
+
+})
 </script>
 
 </html>

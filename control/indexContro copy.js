@@ -71,6 +71,12 @@ indexContro.upArticle = async (req, res) => {
 }
 // 获取数据 分类页
 indexContro.getCategory = async (req, res) => {
+       let { limit, page } = req.query;
+       const pageS = (page - 1) * limit;
+        
+       // SELECT count(*) FROM users
+       const sql1 = `SELECT count(*) FROM category`;
+       let count = await query(sql1);
        const sqlStr = `SELECT * FROM category WHERE status = 0`;
        let data = await query(sqlStr);
 

@@ -1,4 +1,4 @@
-const loginContro = {}
+const userContro = {}
 const md5 = require('md5');
 const { passwode_salt } = require('../config/config')
 const path = require('path');
@@ -10,28 +10,28 @@ const viewPath = require('../model/viewPath')
 const templateViews = require('../model/template');
 const { log } = require('console');
 // 返回登录页
-loginContro.login = (req, res) => {
+userContro.login = (req, res) => {
        res.sendFile(viewPath('login.html', path))
 
 };
 // 登录 校验 接口
-loginContro.upLogin = async (req, res) => {
+userContro.upLogin = async (req, res) => {
 
        let { username, password } = req.body;
        password = md5(password, passwode_salt)
 
        const sqlStr = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
        let data = await query(sqlStr);
-       let { id, avatar } = data[0];
-       // console.log(data, 'data');
-       // data[0];
+       
+      
+      
        if (data.length === 0) {
               res.json({
                      err: 0,
                      msg: "账号密码错误请重试"
               })
        } else {
-
+              let { id, avatar } = data[0];
               req.session.userInfo = req.body;
               userInfo = req.session.userInfo;
               // 查询 user 表中 与 信息 关联的 表 并 返回
@@ -50,7 +50,7 @@ loginContro.upLogin = async (req, res) => {
 };
 
 // cookie 退出登录 
-loginContro.outLog = async (req, res) => {
+userContro.outLog = async (req, res) => {
        console.log('退出登录');
        res.cookie('userInfo', '')
        // 销毁当前session
@@ -63,7 +63,7 @@ loginContro.outLog = async (req, res) => {
        res.send('ok')
 }
 // 修改 用户 信息 submitUserText
-loginContro.eaitUserText = async (req, res) => {
+userContro.eaitUserText = async (req, res) => {
 //       
        let imgSrc;
        // 上一级 路径
@@ -107,4 +107,9 @@ loginContro.eaitUserText = async (req, res) => {
        res.cookie('userInfo',JSON.stringify(dataS[0]), { expires: new Date(Date.now() + 8 * 2 * 3600000), path: '/' })
        res.send('yes')
 }
-module.exports = loginContro;
+
+// 修改密码  editPassword editPasswordView
+userContro.editPasswordView = async (req, res) => {
+       res.sendFile(viewPath('editPasswordView.html', path))
+}
+module.exports = userContro;

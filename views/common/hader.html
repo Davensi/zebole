@@ -23,11 +23,11 @@
     <li class="layui-nav-item layui-hide layui-show-md-inline-block">
       <a href="javascript:;">
         <img src="https://img2.baidu.com/it/u=1012304310,3936720750&fm=26&fmt=auto&gp=0.jpg" class="layui-nav-img">
-        <span id="userN">888</span>
+        <span id="userN">勤登陆</span>
       </a>
       <dl class="layui-nav-child">
         <dd id="editBtn"><a href="javascript:;">个人信息</a></dd>
-        <dd><a href="">修改密码</a></dd>
+        <dd id="editPassword"><a href="/editPasswordView"  >修改密码</a></dd>
         <dd onclick="outLog" id="outlog"><a href="javascript:;">退出</a></dd>
       </dl>
     </li>
@@ -63,7 +63,9 @@
         <span> 仅支持 png,jpg,gif,小于2mb</span>
         <button type="button" class="layui-btn" onclick="endFile()">上传新的头像</button>
         <input type="file" name="harderImg" lay-verify="harderImg" autocomplete="off" style="display: none;"
-          onchange="fileChange(this,'#userImg')">
+          onchange="fileChange(this,'#userImg',()=>{
+            console.log(this);
+          })">
 
       </div>
       <img class="layui-upload-img" id="userImg"
@@ -87,10 +89,10 @@
 <script>
   // 图片赋值 onchange
   let newPic;
-  function fileChange(thia, ele) {
+  function fileChange(thia, ele,fn) {
     // 拿到文件描述
     let upFile = thia.files[0];
-    console.log(upFile);
+    // console.log(upFile);
     // 文件处理
     let fileReder = new FileReader();
     // 读取文件
@@ -101,10 +103,10 @@
       let imgba64 = e.target.result;
       // console.log(imgba64);
       $(ele).attr('src', imgba64);
-      console.log(upFile.name);
-      newPic = `${upFile.name}`
-      // console.log(pic, 'pic');
-
+      // console.log(upFile.name);
+      _newPic = `${upFile.name}`
+      // console.log(_newPic, 'pic');
+      fn.call()
     }
 
 

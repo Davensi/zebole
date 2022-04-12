@@ -38,7 +38,7 @@ indexContro.DelArticle = async (req, res) => {
        res.send('yes')
 }
 
-//  更改 文章 接口
+//  修改 文章 接口
 indexContro.alterArticle = async (req, res) => {
 
        let { add_date, author, cate_id, content, pic, status, title, alter_id, imgSrc } = req.body;
@@ -55,26 +55,34 @@ indexContro.alterArticle = async (req, res) => {
               });
        }
        console.log(imgSrc, 'imgSrc');
-       // if(){
-
-       // }
+       
        res.send('yes')
 }
 
 // 获取 rticle 数据
 indexContro.getArticle = async (req, res) => {
 
-       let sqlStr = `SELECT * FROM article `;
-       if (req.query?.id) {
-              sqlStr = `SELECT * FROM article where id = ${req.query.id}`;
-       }
+       let { limit, page } = req.query;
+       const pageS = (page - 1) * limit;
+       // SELECT t1.*,t2.cate_name	from article as t1   LEFT JOIN category as t2  on   t1.cate_id = t2.cate_id
+       // let sqlStr = `SELECT * FROM article limit ${pageS},${limit}`;
+       // let sqlStr = `SELECT t1.*,t2.cate_name	from article as t1   LEFT JOIN category as t2  on   t1.cate_id = t2.cate_id limit ${pageS},${limit}`
+       let sqlStr = `SELECT t1.*,t2.cate_name,t3.username FROM article t1 left JOIN category t2 on t1.cate_id = t2.cate_id left JOIN users t3 ON t1.cate_id = t3.avatar limit ${pageS},${limit}`
+       const sql1 = `SELECT count(*) FROM article `;
+       let data2 = await query(sql1);
+       let count =data2[0]['count(*)'];
+       console.log(count,);
+       // if (req.query?.id) {
+       //        sqlStr = `SELECT * FROM article where id = ${req.query.id}`;
+       // }
 
        let data = await query(sqlStr);
        let obj = {
+              count,
               data,
               "code": 0,
               "msg": "",
-              "count": data.length,
+               
        }
        res.json(obj)
 }

@@ -8,7 +8,7 @@ const cateContro = require('../control/cateContro');
 // 配置 控制器
 const systemContro = require('../control/systemContro');
 // 登录 控制器
-const loginContro = require('../control/loginContro');
+const userContro = require('../control/userContro');
 const multer = require('multer')
  
 
@@ -35,19 +35,21 @@ Router.get('/',indexContro.index);
 Router.get('/getArticle',indexContro.getArticle)
 // 删除 文章
 Router.get('/DelArticle',indexContro.DelArticle)
-// 更改 文章 内容
+// 修改 文章 内容
 Router.post('/alterArticle', upload.single('title'),indexContro.alterArticle)
 
 // 登录页
-Router.get('/login',loginContro.login)
+Router.get('/login',userContro.login)
 // 退出登录
-Router.get('/outLog',loginContro.outLog)
+Router.get('/outLog',userContro.outLog)
 // 修改 用户信息 接口 eaitUserText   upHarder.single('harderImg')
  
-Router.post('/eaitUserText',upHarder.single('harderImg'),loginContro.eaitUserText)
+Router.post('/eaitUserText',upHarder.single('harderImg'),userContro.eaitUserText)
+// 修改 密码
+Router.get('/editPasswordView',upHarder.single('harderImg'),userContro.editPasswordView)
 
 // 登录 校验 接口
-Router.post('/up-login',upload.single('username') ,loginContro.upLogin)
+Router.post('/up-login',upload.single('username') ,userContro.upLogin)
 
 // 获取分类数据 接口
 Router.get('/getCategory',cateContro.getCategory)
@@ -68,7 +70,7 @@ Router.get('/editArticle',indexContro.editArticle)
 Router.get('/addArticle',cateContro.addArticle)
 
 // 添加文章 接口
-Router.post('/upCate',cateContro.upCate)
+// Router.post('/upCate',cateContro.upCate)
 
 // 文章分类 搜索 接口
 Router.get('/inCate',cateContro.inCate)
@@ -93,7 +95,7 @@ Router.get('/DelSystem',systemContro.DelSystem)
 // 配置 搜索  接口
 Router.get('/inSystem',systemContro.inSystem)
 
-// 修改
+// 修改  文章分类 表 
 Router.get('/categoryAlter',cateContro.categoryAlter)
 
 module.exports = Router;

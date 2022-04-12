@@ -66,7 +66,9 @@
                         <label class="layui-form-label">内容</label>
                         <div class="layui-input-block">
                             <input type="file" name="file" lay-verify="file" autocomplete="off"
-                                onchange="fileChange(this,'#demo1')">
+                                onchange="fileChange(this,'#demo1',()=>{
+                                    console.log(11);
+                                  })">
                         </div>
                     </div>
 
@@ -115,7 +117,7 @@
 <script src="/static/jquery.min.js"></script>
 <script>
 
-   
+let artrPic;
     layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
         var form = layui.form
             , layer = layui.layer
@@ -132,6 +134,8 @@
         //表单赋值
         // 原图片的src
         let imgSrc;
+        // 新路径
+       
         // 要修改的 id
         let _id;
         async function getArticle() {
@@ -173,8 +177,7 @@
             console.log(imgSrc, 'src');
             console.log(_id, 'id');
         }, 50)
-
-
+       
         //创建一个编辑器
         var editIndex = layedit.build('LAY_demo_editor');
 
@@ -197,46 +200,13 @@
         });
 
 
-        // 常规使用 - 普通图片上传 图片 上传
-        var uploadInst = upload.render({
-            elem: '#test1'
-            , url: '/option' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
-            // , auto: false //选择文件后不自动上传
-            , bindAction: '#demo1' // 指向一个按钮触发上传
-            , before: function (obj) {
-                // 预读本地文件示例，不支持 ie8
-                obj.preview(function (index, file, result) {
-                    $('#demo1').attr('src', result); //图片链接（base64）
-                });
-            }
-            , done: function (res) {
-                //如果上传失败
-
-                if (res.code > 0) {
-                    return layer.msg('上传失败');
-                }
-                //上传成功的一些操作
-                console.log('成功000');
-                //……
-                $('#demoText').html(''); //置空上传失败的状态
-            }
-            , error: function (res) {
-                // 演示失败状态，并实现重传
-                // var demoText = $('#demoText');
-                // demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                // demoText.find('.demo-reload').on('click', function () {
-                //     uploadInst.upload();
-                // });
-                console.log('成功000', res);
-            }
-            //进度条
-
-        });
+         
 
        
 
         //监听提交
         form.on('submit(demo1)', function (data) {
+            console.log(artrPic,'artrPic');
             console.log(data.field, 'data');
             console.log(data.field?.status, '是否有');
             let formData = new FormData($(".layui-form")[0]);

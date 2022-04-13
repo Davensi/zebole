@@ -1,5 +1,6 @@
 
 const express = require('express');
+// import express  from '../node_modules/experss'
 const Router = express.Router();
 // 文章控制器
 const indexContro = require('../control/indexContro');
@@ -10,7 +11,8 @@ const systemContro = require('../control/systemContro');
 // 登录 控制器
 const userContro = require('../control/userContro');
 const multer = require('multer')
- 
+const cookie = require('cookie-parser')
+Router.use(cookie())
 
 // 解析post参数
 Router.use(express.json())
@@ -37,9 +39,17 @@ Router.get('/getArticle',indexContro.getArticle)
 Router.get('/DelArticle',indexContro.DelArticle)
 // 修改 文章 内容
 Router.post('/alterArticle', upload.single('title'),indexContro.alterArticle)
+// 获取 文章的 总数 
+Router.get('/addUpcate', indexContro.addUpcate)
 
 // 登录页
 Router.get('/login',userContro.login)
+// 验证 是否 有 该 账户
+Router.post('/inUser',userContro.inUser)
+// 验证 密码
+Router.post('/inPassword',userContro.inPassword)
+// 更改密码
+Router.post('/editPassword',userContro.editPassword)
 // 退出登录
 Router.get('/outLog',userContro.outLog)
 // 修改 用户信息 接口 eaitUserText   upHarder.single('harderImg')

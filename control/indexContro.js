@@ -55,7 +55,7 @@ indexContro.alterArticle = async (req, res) => {
               });
        }
        console.log(imgSrc, 'imgSrc');
-       
+
        res.send('yes')
 }
 
@@ -70,7 +70,7 @@ indexContro.getArticle = async (req, res) => {
        let sqlStr = `SELECT t1.*,t2.cate_name,t3.username FROM article t1 left JOIN category t2 on t1.cate_id = t2.cate_id left JOIN users t3 ON t1.cate_id = t3.avatar limit ${pageS},${limit}`
        const sql1 = `SELECT count(*) FROM article `;
        let data2 = await query(sql1);
-       let count =data2[0]['count(*)'];
+       let count = data2[0]['count(*)'];
        console.log(count,);
        // if (req.query?.id) {
        //        sqlStr = `SELECT * FROM article where id = ${req.query.id}`;
@@ -82,31 +82,40 @@ indexContro.getArticle = async (req, res) => {
               data,
               "code": 0,
               "msg": "",
-               
+
        }
        res.json(obj)
 }
 //   验证是否翻墙的路由
 // session
-indexContro.isUsers =  (req, res, next) => {
-              // let _path = ['/up-login', '/login'];
-              // let { url } = req;
-              // log(url, 'path');
-              // if (_path.includes(url)) {
-              //        //     log('无需验证');
-                     next();
-              // } else {
+indexContro.isUsers = (req, res, next) => {
+       // let _path = ['/up-login', '/login'];
+       // let { url } = req;
+       // log(url, 'path');
+       // if (_path.includes(url)) {
+       //        //     log('无需验证');
+       next();
+       // } else {
 
-              //        if (req.session.userInfo) {
-              //               //  log('有凭证')
-              //               next();
-              //        } else {
-              //               res.redirect('/login');
-              //        }
-              // }
+       //        if (req.session.userInfo) {
+       //               //  log('有凭证')
+       //               next();
+       //        } else {
+       //               res.redirect('/login');
+       //        }
+       // }
 
 
 
+}
+
+// 统计文章的 总数  addUpcate
+indexContro.addUpcate = async (req, res, next) => {
+       // 将 数据 处理 返回
+let sql = ` SELECT t2.cate_name,count(t1.id)  from article t1 LEFT JOIN category t2 ON t1.cate_id = t2.cate_id GROUP BY t2.cate_name ORDER BY  count(t1.id) desc`;
+       let data = await query(sql);
+       console.log(data,'data');
+       res.send(data)
 }
 
 

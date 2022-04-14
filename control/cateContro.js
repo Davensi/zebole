@@ -39,7 +39,9 @@ cateContro.DelCategory = async (req, res) => {
 // 获取分类页数据
 cateContro.getCategory = async (req, res) => {
     let { limit, page } = req.query;
-    const pageS = (page - 1) * limit;
+    let pageS = (page - 1) * limit;
+    
+   
     // SELECT count(*) FROM users  
     // 分页 算法 当前 页 -1 除以 页总数
     /*
@@ -49,8 +51,15 @@ cateContro.getCategory = async (req, res) => {
     // SELECT count(*) FROM users
     const sql1 = `SELECT count(*) FROM category`;
     let data2 = await query(sql1);
-    let count =data2[0]['count(*)'];
-    const sql2 = `SELECT * FROM category WHERE status = 0 limit ${pageS},${limit}`;
+    let count = data2[0]['count(*)'];
+    let sql2;
+    if(req.query?.page){
+        
+        sql2 = `SELECT * FROM category WHERE status = 0 `;
+    }else{
+        sql2 = `SELECT * FROM category WHERE status = 0 limit ${pageS},${limit}`;
+    }
+     
     // const sql2 = ``
     let data = await query(sql2);
     if (data) {
@@ -94,9 +103,9 @@ cateContro.upCate = async (req, res) => {
 }
 
 // addArticle 添加分类页
-cateContro.addArticle = async (req, res) => {
+cateContro.addCategory = async (req, res) => {
     // res.render(('addArticle.html'))
-    templateViews(res, 'addArticle.html')
+    templateViews(res, 'addCategory.html')
 }
 // cateContro
 module.exports = cateContro;

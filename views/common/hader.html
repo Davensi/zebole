@@ -27,7 +27,7 @@
       </a>
       <dl class="layui-nav-child">
         <dd id="editBtn"><a href="javascript:;">个人信息</a></dd>
-        <dd id="editPassword"><a href="/editPasswordView"  >修改密码</a></dd>
+        <dd id="editPassword"><a href="/editPasswordView">修改密码</a></dd>
         <dd onclick="outLog" id="outlog"><a href="javascript:;">退出</a></dd>
       </dl>
     </li>
@@ -62,8 +62,7 @@
       <div class="layui-input-block">
         <span> 仅支持 png,jpg,gif,小于2mb</span>
         <button type="button" class="layui-btn" onclick="endFile()">上传新的头像</button>
-        <input type="file" name="harderImg" lay-verify="harderImg" autocomplete="off" style="display: none;"
-          onchange="fileChange(this,'#userImg',()=>{
+        <input type="file" name="harderImg" lay-verify="harderImg" autocomplete="off" style="display: none;" onchange="fileChange(this,'#userImg',()=>{
             console.log(this);
           })">
 
@@ -89,10 +88,11 @@
 <script>
   // 图片赋值 onchange
   let newPic;
-  function fileChange(thia, ele,fn) {
+  function fileChange(thia, ele, fn) {
+    fn = fn || function () { };
     // 拿到文件描述
     let upFile = thia.files[0];
-    // console.log(upFile);
+
     // 文件处理
     let fileReder = new FileReader();
     // 读取文件
@@ -103,9 +103,11 @@
       let imgba64 = e.target.result;
       // console.log(imgba64);
       $(ele).attr('src', imgba64);
+      console.log($(ele));
       // console.log(upFile.name);
-      _newPic = `${upFile.name}`
+      newPic = `${upFile.name}`
       // console.log(_newPic, 'pic');
+
       fn.call()
     }
 
@@ -128,6 +130,7 @@
   $('#userN').text(user.name)
   // 配置 图片
   $('.layui-nav-img').attr('src', user.pic)
+  $('#userImg').attr('src', user.pic)
   document.getElementById('outlog').onclick = function () {
     // 1-发送请求
     $.get('/outLog');
@@ -144,14 +147,14 @@
 
     // 如果没传图片 则 图片 为原图
     if (newPic) {
-      newPic  = `/static/harder/${newPic}`
+      newPic = `/static/harder/${newPic}`
 
     } else {
       newPic = user.pic
     }
     formData.append('newPic', newPic);
     formData.append('pic', user.pic);
-    
+
     console.log(formData.get('_sex'), 'sex');
     $.ajax({
       type: "post",
@@ -161,8 +164,11 @@
 
       data: formData,
     }).then(res => {
-      console.log(res);
-      location.href = '/'
+      user = JSON.parse(Cookies.get('userInfo'));
+      console.log(user,'user');
+      $('.layui-nav-img').attr('src', user.pic)
+      $('#userImg').attr('src', user.pic)
+      // location.href = '/'
     })
 
   }
@@ -183,8 +189,10 @@
       skin: 'layui-layer-rim', //加上边框
       area: ['620px', '640px'], //宽高
       shadeClose: true,
-      shade: 0,
-      maxmin: true,
+      shade:  [0.7, '#393D49'],
+      
+      // maxmin: true,
+      
       content: $("#editUser"),
       success() {
         // 表单 回值

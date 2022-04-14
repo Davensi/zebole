@@ -73,8 +73,11 @@ userContro.eaitUserText = async (req, res) => {
        const imgPath = `/static/harder/`;
        // 各项 参数
        let { pic, _content, _name, _sex, avatar, newPic } = req.body;
-       // 判断 是否 上传 了 新文件 
-       if (newPic !== pic) {
+       // 判断 是否 上传 了 新文件
+       console.log(newPic); 
+       console.log(pic); 
+       console.log(newPic !== pic,'更新没'); 
+       if (newPic !== pic) { 
 
               // console.log(newPic, 'newPic');
               // console.log('没传');
@@ -92,7 +95,7 @@ userContro.eaitUserText = async (req, res) => {
 
                      log('删除成功')
               })
-              pic = newPic;
+           pic = newPic; 
 
        }
        // path.join(`${__dirname}/data/img/${filename}`)
@@ -103,6 +106,7 @@ userContro.eaitUserText = async (req, res) => {
        // 重新 查询 表 设置 cookie
        let sql = ` SELECT t1.avatar,t2.*	from users as t1 LEFT JOIN user_relevancy as t2 on t1.avatar = ${avatar} = t2.avatar_id  limit  1`;
        console.log(sql, 'sql');
+       console.log(pic, 'pic');
        let dataS = await query(sql);
        console.log(dataS, 'dataS更新为');
        res.cookie('userInfo', JSON.stringify(dataS[0]), { expires: new Date(Date.now() + 8 * 2 * 3600000), path: '/' })

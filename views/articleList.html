@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>德德后台管理系统</title>
     <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <!-- 灯箱 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/lightbox2/2.9.0/css/lightbox.min.css" rel="stylesheet">
     <style>
         .box {
             height: 100;
@@ -36,11 +38,11 @@
             </div>
         </div>
 
-
-        <div class="layui-footer">
-            <!-- 底部固定区域 -->
+<!-- 底部固定区域 -->
+        <!-- <div class="layui-footer">
+            
             底部固定区域
-        </div>
+        </div> -->
     </div>
 
     <!-- 单元格工具 -->
@@ -62,6 +64,8 @@
       </script>
 
     <script src="/static/layui/layui.js"></script>
+    <!-- 灯箱 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/lightbox2/2.9.0/js/lightbox-plus-jquery.js"></script>
     <script>
         // JS 
         layui.use(['element', 'layer', 'util'], function () {
@@ -119,29 +123,33 @@
                     , { field: 'add_date', title: '添加日期', width: 120, edit: 'false', }
                     , { field: 'cate_name', title: '所属分类', width: 120, edit: 'false', }
                     , {
-                        field: 'pic', title: '封面', width: 120, style:'height: 50px', templet: function (res) {
-                            return `<img src="${res.pic}" alt="">`;
+                        field: 'pic', title: '封面', width: 120, style:'height: 50px', templet: function ({pic}) {
+                            // return `<img src="${res.pic}" alt="">`;
+                            // 配置 灯箱  效果 
+                            return `<a href="${pic}" data-lightbox="image-1" data-title="My caption"><img src="${pic}" /></a>`;
                         }, edit: 'false',
                     }
                     , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
 
 
                 ]]
-                , page: true
+                , page: {
+                    limit:5,
+                }
             });
             let active = {
                 reload: function () {
+                    // 拿到 搜索 框 的 值 
                     var demoReload = $('#demoReload');
                     console.log(demoReload.val());
                     //执行重载
                     table.reload('test', {
-                        url: "/inCate",
+                        url: "/getArticle",
                         page: {
                             curr: 1 //重新从第 1 页开始
                         }
                         , where: {
-                            'cate_id': demoReload.val(),
-
+                            'keyWord': demoReload.val(),
                         }
                     });
                 }
@@ -173,7 +181,7 @@
                     //自定义头工具栏右侧图标 - 提示
                     case 'addTiem':
                         layer.msg('追加配置');
-                        location.href = '/editArticle'
+                        location.href = '/addArticle'
                         break;
                     case 'LAYTABLE_TIPS':
                         layer.alert('这是工具栏右侧自定义的一个图标按钮');
@@ -185,11 +193,13 @@
             table.on('tool(test)', function (obj) {
                 var data = obj.data;
                 let id = data.id;
+                let pic = data.pic;
                 // edit
                 if (obj.event === 'del') {
-                    layer.confirm('真的删除行么'+id, function (index) {
+                    console.log(data);
+                    layer.confirm('真的删除行么'+id+pic, function (index) {
                         obj.del();
-                        $.get('/DelArticle', {id }).then(res => { console.log(res); })
+                        $.get('/DelArticle', {id,pic }).then(res => { console.log(res); })
                         table.reload('test')
                         layer.close(index);
                     });

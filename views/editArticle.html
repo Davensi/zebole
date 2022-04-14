@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link href="https://cdn.bootcdn.net/ajax/libs/wangEditor/3.1.1/wangEditor.css" rel="stylesheet">
     <style>
         #demo1 {
             width: 150px;
@@ -27,8 +28,6 @@
             <div style="padding: 15px;">
                 <form class="layui-form" action="" lay-filter="layui-form">
 
-
-
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">标题</label>
@@ -42,60 +41,52 @@
 
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">所属用户ID</label>
+
+                            <label class="layui-form-label">文章分类</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="author" lay-verify="required|author" autocomplete="off"
-                                    class="layui-input">
+                                <select name="cate_id" id="">
+                                </select>
                             </div>
                         </div>
 
-
                     </div>
+
+
+
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">日期</label>
+        
+                            <label class="layui-form-label">上传图片</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="add_date" id="date" lay-verify="add_date"
-                                    placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                                <input style=" display: none;" type="file" name="file" lay-verify="file" autocomplete="off"
+                                    onchange="fileChange(this,'#demo1')">
+                                <a class="layui-btn layui-btn-normal" id="upBtn">+ 上传图片</a>
+                                <br>
+                                <img class="layui-upload-img" style="width: 100px;" id="demo1">
                             </div>
                         </div>
-
+        
                     </div>
-
-                    <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">内容</label>
-                        <div class="layui-input-block">
-                            <input type="file" name="file" lay-verify="file" autocomplete="off"
-                                onchange="fileChange(this,'#demo1',()=>{
-                                    console.log(11);
-                                  })">
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">内容</label>
-                        <div class="layui-input-block">
-                            <textarea placeholder="请输入内容" class="layui-textarea" name="content"
-                                lay-verify="content"></textarea>
-                        </div>
-                        <img class="layui-upload-img" id="demo1">
-                    </div>
-
-
-
+        
+        
                     <a name="list-progress"> </a>
-
-
-
-
-
+        
+        
+                    <label class="layui-form-label">内容</label>
+                    <div class="layui-form-item">
+        
+                        <div id="div1">
+                        </div>
+        
+                    </div>
+        
                     <div class="layui-form-item">
                         <label class="layui-form-label">该文章状态</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="status" lay-skin="switch" lay-text="通过|待审核">
                         </div>
                     </div>
-
+        
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
@@ -104,20 +95,27 @@
                     </div>
                 </form>
             </div>
-        </div>
 
-        <div class="layui-footer">
-            <!-- 底部固定区域 -->
-            底部固定区域
+
+         
+            
         </div>
+    </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        底部固定区域
+    </div>
     </div>
 
 </body>
 <script src="/static/layui/layui.js"></script>
 <script src="/static/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/wangEditor/3.1.1/wangEditor.js"></script>
 <script>
 
-let artrPic;
+    let artrPic;
     layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
         var form = layui.form
             , layer = layui.layer
@@ -131,13 +129,40 @@ let artrPic;
             elem: '#date'
         });
 
-        //表单赋值
+        const E = window.wangEditor
+        const editor = new E("#div1")
+        // 或者 const editor = new E(document.getElementById('div1'))
+        editor.create()
+
+        function getClassGroups() {
+            $.get('/getCategory', { limt: 10, page: 1 }).then(res => {
+                // console.log(res);
+                let { data } = res;
+                // console.log(data);
+                let optionHtml = `<option value="0">为分类</option>`;
+                data.forEach(tiem => {
+                    // console.log(tiem);
+                    let { cate_id, cate_name } = tiem;
+                    optionHtml += `<option value="${cate_id}">${cate_name}</option>`
+                })
+                $('select').html(optionHtml)
+                form.render('select')
+                // console.log(optionHtml);
+
+
+            })
+        }
+        getClassGroups()
+
+
+
         // 原图片的src
         let imgSrc;
-        // 新路径
-       
+
+
         // 要修改的 id
         let _id;
+        // 富文本 回值
         async function getArticle() {
 
             var url = decodeURI(window.location.href);
@@ -160,24 +185,31 @@ let artrPic;
             // 数据 回显
             $('#demo1').attr('src', pic)
             form.val('layui-form', {
-                "title": title, // "name": "value"
-                "add_date": add_date,
-                "author": author,
-                "cate_id": cate_id,
-                "content": content,
-                "status": status,
+                cate_id,
+                status,
+                title, // "name": "value"
+                // add_date,
+
+
+
+
             });
+
+            editor.cmd.do('insertHTML', content)
             imgSrc = pic;
             _id = alter_id;
             // return pic;
         };
 
         getArticle();
-        setTimeout(() => {
-            console.log(imgSrc, 'src');
-            console.log(_id, 'id');
-        }, 50)
-       
+
+        $("#upBtn").click(function () {
+            console.log(666);
+            $('input[name=file]').click();
+            return false
+        })
+
+
         //创建一个编辑器
         var editIndex = layedit.build('LAY_demo_editor');
 
@@ -200,24 +232,26 @@ let artrPic;
         });
 
 
-         
 
-       
+
+
 
         //监听提交
         form.on('submit(demo1)', function (data) {
-            console.log(artrPic,'artrPic');
+            console.log(imgSrc, 'artrPic');
             console.log(data.field, 'data');
-            console.log(data.field?.status, '是否有');
+
             let formData = new FormData($(".layui-form")[0]);
             formData.append('imgSrc', imgSrc);
             formData.append('id', _id);
-            console.dir($('input[name=file]')[0]);
+            formData.append('avatar', user.avatar);
+            formData.append('content', editor.txt.html());
+
             layer.alert(JSON.stringify(data.field), {
                 title: '最终的提交信息'
             });
             $.ajax({
-                url: '/alterArticle',
+                url: '/editArticleData',
                 processData: false, //  jquery不需要处理数据
                 contentType: false, // 不要设置编码
                 type: "post",
@@ -226,11 +260,7 @@ let artrPic;
             return false;
         });
 
-        //表单取值
-        // layui.$('#LAY-component-form-getval').on('click', function () {
-        //     var data = form.val('example');
-        //     alert(JSON.stringify(data));
-        // });
+
 
     });
 </script>

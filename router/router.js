@@ -22,6 +22,10 @@ Router.use(express.urlencoded({ extended: true }));
 const upload = multer({ 
     dest: './static/upData' 
 })
+const loadArti = multer({ 
+    dest: './static/arti' 
+})
+ 
 
  
 
@@ -37,8 +41,10 @@ Router.get('/',indexContro.index);
 Router.get('/getArticle',indexContro.getArticle)
 // 删除 文章
 Router.get('/DelArticle',indexContro.DelArticle)
+// 删除 
+ 
 // 修改 文章 内容
-Router.post('/alterArticle', upload.single('title'),indexContro.alterArticle)
+Router.post('/editArticleData', loadArti.single('file'),indexContro.editArticleData)
 // 获取 文章的 总数 
 Router.get('/addUpcate', indexContro.addUpcate)
 
@@ -76,8 +82,12 @@ Router.get('/article',indexContro.article)
 // 修改文章页
 Router.get('/editArticle',indexContro.editArticle)
 
-// 添加文章分类 接口
-Router.get('/addArticle',cateContro.addArticle)
+// 添加文章分类页 addCategory
+Router.get('/addCategory',cateContro.addCategory)
+// 添加文章 页
+Router.get('/addArticle',indexContro.addArticle)
+// 添加 文章 接口
+Router.post('/addArticleData',loadArti.single('file'),indexContro.addArticleData)
 
 // 添加文章 接口
 // Router.post('/upCate',cateContro.upCate)

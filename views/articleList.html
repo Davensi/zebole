@@ -38,7 +38,7 @@
             </div>
         </div>
 
-<!-- 底部固定区域 -->
+        <!-- 底部固定区域 -->
         <!-- <div class="layui-footer">
             
             底部固定区域
@@ -51,7 +51,7 @@
       <button class="layui-btn layui-btn-sm" lay-event="getCheckData">选中条目</button>
       <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
       <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-      <button class="layui-btn layui-btn-sm" lay-event="addTiem">添加文章</a> </button>
+      <button  class="layui-btn layui-btn-sm" lay-event="addTiem">添加文章</a> </button>
     </div>
     <div id="titleTpl">
         <b></b>
@@ -99,6 +99,7 @@
         layui.use('table', function () {
             var table = layui.table, $ = layui.$;
 
+
             table.render({
                 elem: '#test'
                 , url: '/getArticle'
@@ -113,17 +114,22 @@
                     { type: 'checkbox', fixed: 'left' }
                     , { field: 'id', title: '序号', width: 80, fixed: 'left', unresize: true, sort: true }
                     , {
-                        field: 'title', title: '标题', width: 200, edit: 'text', templet: function (res) {
-                            return '<em>' + res.title + '</em>';
+                        field: 'title', title: '标题', width: 200, edit: '', templet: function (res) {
+                            // return '<em>' + res.title + '</em>';  lay-event="details"
+                            // return `<em onclick="details(res)">  ${res.title} </em>`;
+                            return `<em   lay-event="details" >  ${res.title} </em>`;
                         }
                     }
                     , { field: 'content', title: '内容', width: 120, edit: 'false', }
                     , { field: 'username', title: '发布者', width: 120, edit: 'false', }
-                    , { field: 'status', title: '状态', width: 120, edit: 'false', }
+                    , { field: 'status', title: '状态', width: 120, edit: 'false', templet: function ({ status }) {
+                        status = status === 0 ? '审核通过' : '未通过'
+                        return status;
+                    } }
                     , { field: 'add_date', title: '添加日期', width: 120, edit: 'false', }
                     , { field: 'cate_name', title: '所属分类', width: 120, edit: 'false', }
                     , {
-                        field: 'pic', title: '封面', width: 120, style:'height: 50px', templet: function ({pic}) {
+                        field: 'pic', title: '封面', width: 120, style: 'height: 50px', templet: function ({ pic }) {
                             // return `<img src="${res.pic}" alt="">`;
                             // 配置 灯箱  效果 
                             return `<a href="${pic}" data-lightbox="image-1" data-title="My caption"><img src="${pic}" /></a>`;
@@ -134,14 +140,14 @@
 
                 ]]
                 , page: {
-                    limit:5,
+                    limit: 5,
                 }
             });
             let active = {
                 reload: function () {
                     // 拿到 搜索 框 的 值 
                     var demoReload = $('#demoReload');
-                    console.log(demoReload.val());
+                    // console.log(demoReload.val());
                     //执行重载
                     table.reload('test', {
                         url: "/getArticle",
@@ -156,17 +162,19 @@
             };
 
 
+
+
             $('.demoTable .layui-btn').on('click', function () {
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
-                console.log(active, 'active');
+                // console.log(active, 'active');
             });
             //头工具栏事件
             table.on('toolbar(test)', function (obj) {
                 var checkStatus = table.checkStatus(obj.config.id);
                 switch (obj.event) {
                     case 'getCheckData':
-                       
+
                         // $.get('/DelCategoryu', { resObj }).then(res => { console.log(res); })
                         layer.alert(JSON.stringify('data') + '是否删除');
                         break;
@@ -196,26 +204,72 @@
                 let pic = data.pic;
                 // edit
                 if (obj.event === 'del') {
-                    console.log(data);
-                    layer.confirm('真的删除行么'+id+pic, function (index) {
+                    // console.log(data);
+                    layer.confirm('真的删除行么' + id + pic, function (index) {
                         obj.del();
-                        $.get('/DelArticle', {id,pic }).then(res => { console.log(res); })
+                        $.get('/DelArticle', { id, pic }).then(res => { console.log(res); })
                         table.reload('test')
                         layer.close(index);
                     });
-                }else if(obj.event === 'edit'){
-                    console.log(obj,id);
+                } else if (obj.event === 'edit') {
+                    // console.log(obj, id);
                     // $.get(`/editArticle?${id}`)
-                    location.href=`/editArticle?id=${id}`
+                    location.href = `/editArticle?id=${id}`
+                } else if (obj.event === 'details') {
+                    // console.log('详情');
+                    // console.log(data);
+                    //页面层-自定义
+                    let { content, title, username, add_date } = data;
+                    let contentHtml = `
+                <table class="layui-table">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                    <th>作者</th>
+                    <th>发布时间</th>
+                    <th>标题</th>
+                    </tr> 
+                </thead>
+                <tbody>
+                    <tr> 
+                    <td>${title}</td>
+                    <td>${add_date}</td>
+                    <td>${username}</td>
+                    </tr>
+                </tbody>
+                </table>
+                <div>内容</div> ${content} `;
+                    layer.open({
+                        type: 1,
+                        title: false,
+                        closeBtn: 0,
+                        shadeClose: true,
+                        skin: 'yourclass',
+                        content: contentHtml,
+                    });
                 }
             });
             // 单元格编辑
             table.on('edit(test)', function (obj) {
                 let { data, value, field } = obj;
                 let { cate_id, } = data;
-                console.log(obj);
-                console.log(cate_id, 'id');
+                // console.log(obj);
+                // console.log(cate_id, 'id');
                 $.get('/alterCate', { cate_id, value }).then(res => { console.log(res); })
+                layer.msg('[ID: ' + cate_id + '] ' + field + ' 字段更改值为：' + value);
+
+            });
+            // 单元格 详情
+            table.on('details(test)', function (obj) {
+                let { data, value, field } = obj;
+                let { cate_id, } = data;
+                // console.log(obj);
+                // console.log(cate_id, 'id');
+                // $.get('/alterCate', { cate_id, value }).then(res => { console.log(res); })
                 layer.msg('[ID: ' + cate_id + '] ' + field + ' 字段更改值为：' + value);
 
             });

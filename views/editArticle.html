@@ -26,7 +26,7 @@
         <div class="layui-body">
 
             <div style="padding: 15px;">
-                <form class="layui-form" action="" lay-filter="layui-form">
+                <form class="layui-form" action="" lay-filter="layui-form" id="form">
 
                     <div class="layui-form-item">
                         <div class="layui-inline">
@@ -55,50 +55,51 @@
 
                     <div class="layui-form-item">
                         <div class="layui-inline">
-        
+
                             <label class="layui-form-label">上传图片</label>
                             <div class="layui-input-inline">
-                                <input style=" display: none;" type="file" name="file" lay-verify="file" autocomplete="off"
-                                    onchange="fileChange(this,'#demo1')">
+                                <input style=" display: none;" type="file" name="file" lay-verify="file"
+                                    autocomplete="off" onchange="fileChange(this,'#demo1')">
                                 <a class="layui-btn layui-btn-normal" id="upBtn">+ 上传图片</a>
                                 <br>
                                 <img class="layui-upload-img" style="width: 100px;" id="demo1">
                             </div>
                         </div>
-        
+
                     </div>
-        
-        
-                    <a name="list-progress"> </a>
-        
-        
+
+
+
+
+
                     <label class="layui-form-label">内容</label>
                     <div class="layui-form-item">
-        
+
                         <div id="div1">
                         </div>
-        
+
                     </div>
-        
+
                     <div class="layui-form-item">
                         <label class="layui-form-label">该文章状态</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="status" lay-skin="switch" lay-text="通过|待审核">
                         </div>
                     </div>
-        
+
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                         </div>
                     </div>
+
                 </form>
             </div>
 
 
-         
-            
+
+
         </div>
     </div>
     </div>
@@ -116,6 +117,8 @@
 <script>
 
     let artrPic;
+    let pic;
+    let contro = false;
     layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
         var form = layui.form
             , layer = layui.layer
@@ -128,11 +131,23 @@
         laydate.render({
             elem: '#date'
         });
+        let editor;
+        function editText() {
+            const E = window.wangEditor
+              editor = new E("#div1")
+            //  开启 上传 图片 
+              editor.customConfig.uploadImgShowBase64 = true
+            // 配置 图片 上传 的 大小
+            editor.customConfig.uploadImgMaxSize = 1.2 * 1024 * 1024 // 0.5M
+            // console.log(editor.customConfig);
+            // 或者 const editor = new E(document.getElementById('div1'))
+            editor.create()
+        }
+         
+            editText()
+        
+      
 
-        const E = window.wangEditor
-        const editor = new E("#div1")
-        // 或者 const editor = new E(document.getElementById('div1'))
-        editor.create()
 
         function getClassGroups() {
             $.get('/getCategory', { limt: 10, page: 1 }).then(res => {
@@ -181,7 +196,18 @@
             let { data } = res;
             console.log(data, 'data');
 
-            let { add_date, author, cate_id, content, pic, status, title, id: alter_id } = data[0];
+            let { add_date, author, cate_id, content, status, title, id: alter_id } = data[0];
+            pic = data[0].pic;
+            console.log(pic, '我赋值了');
+            // 判断 图片 是否 为 空 
+            if (!pic) {
+                console.log('没图', pic);
+                contro = false;
+
+            } else {
+                console.log('有图');
+                contro = true;
+            }
             // 数据 回显
             $('#demo1').attr('src', pic)
             form.val('layui-form', {
@@ -235,16 +261,15 @@
 
 
 
-
         //监听提交
         form.on('submit(demo1)', function (data) {
             console.log(imgSrc, 'artrPic');
             console.log(data.field, 'data');
+            let formData = new FormData($("#form")[0]);
 
-            let formData = new FormData($(".layui-form")[0]);
-            formData.append('imgSrc', imgSrc);
+            formData.append('pic', imgSrc);
             formData.append('id', _id);
-            formData.append('avatar', user.avatar);
+            formData.append('contro', contro);
             formData.append('content', editor.txt.html());
 
             layer.alert(JSON.stringify(data.field), {

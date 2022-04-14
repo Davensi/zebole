@@ -106,10 +106,20 @@
 <script>
 
 
-    const E = window.wangEditor
-    const editor = new E("#div1")
-    // 或者 const editor = new E(document.getElementById('div1'))
-    editor.create()
+let editor;
+        function editText() {
+            const E = window.wangEditor
+              editor = new E("#div1")
+            //  开启 上传 图片 
+              editor.customConfig.uploadImgShowBase64 = true
+            // 配置 图片 上传 的 大小
+            editor.customConfig.uploadImgMaxSize = 1.2 * 1024 * 1024 // 0.5M
+            
+            // 或者 const editor = new E(document.getElementById('div1'))
+            editor.create()
+        }
+         
+            editText()
     // 富文本 回值
     editor.cmd.do('insertHTML', '<p>我是内容</p>')
     layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
@@ -128,7 +138,7 @@
 
         // 点击 
         $("#upBtn").click(function () {
-            console.log(666);
+            // console.log(666);
             $('input[name=file]').click();
             return false
         })
@@ -160,8 +170,8 @@
         getClassGroups()
 
 
-        // console.log(moment().subtract(10, 'days').calendar());
-        console.log(moment().format('YYY-MM-DD, HH:mm:ss '));
+       
+        // console.log(moment().format('YYY-MM-DD, HH:mm:ss '));
         // .txt.html() 
         //监听提交
         form.on('submit(demo1)', function (data) {
@@ -172,13 +182,14 @@
             formData.append('avatar', user.avatar);
             formData.append('content', editor.txt.html());
             formData.append('add_date', moment().format('YYY-MM-DD, HH:mm:ss '));
-             
             $.ajax({
                 type: "post",
                 url: "/addArticleData",
                 processData: false, //  jquery不需要处理数据
                 contentType: false, // 不要设置编码
                 data: formData,
+            }).then(_=>{
+                location.href = '/article'
             })
             return false;
         });

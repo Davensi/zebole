@@ -41,7 +41,7 @@ indexContro.DelArticle = async (req, res) => {
                      if(err) throw err;
                      console.log('删除成功·。。。。');
               })
-              console.log(path.join(imgPath,pic),'path');
+              // console.log(path.join(imgPath,pic),'path');
        }
 
        //  console.log('删除',id);
@@ -54,22 +54,43 @@ indexContro.DelArticle = async (req, res) => {
 //  修改 文章 接口
 indexContro.editArticleData = async (req, res) => {
 
-       let { add_date, author, cate_id, content, pic, status, title, alter_id, imgSrc } = req.body;
-
+       let { add_date, author, contro, content, status, title, id, pic } = req.body;
+       status = status == 'on' ? 1 : 0;
+        
+       id = parseInt(id);
        console.log(req.body);
        // 等待处理 sql 语句
        // 判断是否 更改了图片
-       // if (req.files) {
-       //        console.log('传了');
-       //        let { originalname, filename, destination } = req.files;
-       //        // 重命名文件
-       //        fs.rename(path.join(`${imgDirname}/${filename}`), path.join(`${imgDirname}/${originalname}`), (err) => {
-       //               if (err) console.log(err, 'on');
-       //               console.log('ok');
-       //        });
-       // }
-       // console.log(imgSrc, 'imgSrc');
+        // 上一级 路径
+        const imgDirname = `${path.dirname(__dirname)}`;
+        // 头像 所在 的 路径
+        const imgPath = `/static/arti/`;
 
+        
+              
+       if (req.file) {
+              console.log('传了');
+              let { originalname, filename, destination } = req.file;
+              // 重命名文件
+              fs.rename(path.join(`${imgDirname}/${imgPath}/${filename}`), path.join(`${imgDirname}/${imgPath}/${originalname}`), (err) => {
+                     if (err) console.log(err, 'on');
+                     console.log('ok');
+              });
+             
+              if(!contro){
+                     log('我服了')
+                     fs.unlink(path.join(`${imgDirname}/${pic}`), (err, data) => {
+                            if (err) throw err;
+       
+                            log('删除成功')
+                     })
+              }
+              
+           pic = imgPath + originalname; 
+       }
+       let sql = `UPDATE article set title = '${title}' , content = '${content}' , status = ${status} , pic = '${pic}'  WHERE  id = ${id}  `
+     
+       await query(sql);
        res.send('yes')
 }
 

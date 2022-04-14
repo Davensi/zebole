@@ -72,7 +72,7 @@ userContro.eaitUserText = async (req, res) => {
        // 头像 所在 的 路径
        const imgPath = `/static/harder/`;
        // 各项 参数
-       let { pic, _content, _name, _sex, avatar, newPic } = req.body;
+       let { pic, _content, _name, _sex, avatar, newPic,id } = req.body;
        // 判断 是否 上传 了 新文件
        console.log(newPic); 
        console.log(pic); 

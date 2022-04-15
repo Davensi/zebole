@@ -10,6 +10,26 @@ const viewPath = require('../model/viewPath')
 const templateViews = require('../model/template');
 const { log } = require('console');
 
+// 防翻墙
+userContro.isUsers = (req, res, next) => {
+       let _path = ['/up-login', '/login'];
+       let { url } = req;
+       log(url, 'path');
+       if (_path.includes(url)) {
+              //     log('无需验证');
+       next();
+       } else {
+
+              if (req.session.userInfo) {
+                     //  log('有凭证')
+                     next();
+              } else {
+                     res.redirect('/login');
+              }
+       }
+
+}
+
 // 返回登录页
 userContro.login = (req, res) => {
        res.sendFile(viewPath('login.html', path))
@@ -24,7 +44,7 @@ userContro.upLogin = async (req, res) => {
        const sqlStr = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
        let data = await query(sqlStr);
 
-
+       console.log(data,'data');
 
        if (data.length === 0) {
               res.json({
@@ -36,10 +56,13 @@ userContro.upLogin = async (req, res) => {
               req.session.userInfo = req.body;
               userInfo = req.session.userInfo;
               // 查询 user 表中 与 信息 关联的 表 并 返回
-              let sql = `SELECT t1.avatar,t2.*	from users as t1 LEFT JOIN user_relevancy as t2 on   t1.avatar=${avatar}	 = t2.avatar_id  `;
+              console.log(avatar,'avatar');
+              // let sql = `SELECT t1.avatar,t2.*	from users as t1 LEFT JOIN user_relevancy as t2 on   t1.avatar=${avatar}= t2.avatar_id  `;
+              let sql = `SELECT *,be_id AS avatar FROM user_relevancy  WHERE  be_id   = ${avatar}`;
 
               let dataS = await query(sql);
-              dataS = dataS[0]
+              dataS = dataS[0];
+              console.log(dataS,'真的C！！！');
               // res.redirect('/');
               res.json({
                      err: 1,
@@ -52,7 +75,7 @@ userContro.upLogin = async (req, res) => {
 
 // cookie 退出登录 
 userContro.outLog = async (req, res) => {
-       console.log('退出登录');
+       // console.log('退出登录');
        res.cookie('userInfo', '')
        // 销毁当前session
        req.session.destroy(function (err) {
@@ -90,11 +113,11 @@ userContro.eaitUserText = async (req, res) => {
               });
               // 删除 原来的 图片
               console.log(path.join(`${imgDirname}/${pic}`, '路径'));
-              fs.unlink(path.join(`${imgDirname}/${pic}`), (err, data) => {
-                     if (err) throw err;
+              // fs.unlink(path.join(`${imgDirname}/${pic}`), (err, data) => {
+              //        if (err) throw err;
 
-                     log('删除成功')
-              })
+              //        log('删除成功')
+              // })
            pic = newPic; 
 
        }
@@ -104,11 +127,11 @@ userContro.eaitUserText = async (req, res) => {
        const sqlStr = `UPDATE user_relevancy set pic = '${pic}', intro = '${_content}', name = '${_name}',sex = ${_sex} WHERE  avatar_id = ${avatar}`;
        let data = await query(sqlStr);
        // 重新 查询 表 设置 cookie
-       let sql = ` SELECT t1.avatar,t2.*	from users as t1 LEFT JOIN user_relevancy as t2 on t1.avatar = ${avatar} = t2.avatar_id  limit  1`;
-       console.log(sql, 'sql');
-       console.log(pic, 'pic');
+       let sql = ` SELECT *,be_id AS avatar FROM user_relevancy  WHERE  be_id   = ${avatar}`;
+       // console.log(sql, 'sql');
+       // console.log(pic, 'pic');
        let dataS = await query(sql);
-       console.log(dataS, 'dataS更新为');
+       // console.log(dataS, 'dataS更新为');
        res.cookie('userInfo', JSON.stringify(dataS[0]), { expires: new Date(Date.now() + 8 * 2 * 3600000), path: '/' })
        res.send('yes')
 }
@@ -121,7 +144,7 @@ userContro.editPasswordView = async (req, res) => {
 // 验证 账号 是否 正确 
 userContro.inUser = async (req, res) => {
        let { username } = req.body;
-       console.log(username);
+       // console.log(username);
        let sql = `SELECT users.username FROM users   WHERE   users.username = '${username}'`;
         
        let data = await query(sql);
@@ -139,9 +162,9 @@ userContro.inPassword = async (req, res) => {
       
        password = md5(password, passwode_salt)
        // let { username } = req.cookies;
-       console.log(password,'password1');
-       console.log('827ccb0eea8a706c4c34a16891f84e7b', 'password2');
-       console.log(username,'username');
+       // console.log(password,'password1');
+       // console.log('827ccb0eea8a706c4c34a16891f84e7b', 'password2');
+       // console.log(username,'username');
        // console.log(res.cookie('username'), 'name');
        let sql = `SELECT users.username,users.id from users WHERE  users.username = '${username}' and users.password = '${password}'`;
 
@@ -150,10 +173,10 @@ userContro.inPassword = async (req, res) => {
        console.log(data,'查到的数据');
        if (data[0]?.username) {
               res.cookie('user', data[0].id)
-              console.log('没有错误');
+              // console.log('没有错误');
        } else {
               res.cookie('user', 'false')
-              console.log('账号密码有误');
+              // console.log('账号密码有误');
        }
        res.send(data)
 
@@ -162,12 +185,11 @@ userContro.inPassword = async (req, res) => {
 userContro.editPassword = async (req, res) => {
        let {user:id,password} = req.body;
        password = md5(password, passwode_salt)
-       console.log(id,'id');
+       // console.log(id,'id');
        let sql =`UPDATE users SET password = '${password}'  WHERE  id = ${id}`
-       console.log(password,'password');
+        
        let data = await query(sql);
-       console.log(data);
-       // res.send('yes')
+ 
        rows(data,res)
 }
 

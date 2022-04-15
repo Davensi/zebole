@@ -33,7 +33,7 @@ const upHarder= multer({ dest: './static/harder' });
 
  
 // 需要 验证 翻墙的路由
-Router.use(indexContro.isUsers)
+Router.use(userContro.isUsers)
 
 Router.get('/',indexContro.index);
 
@@ -90,7 +90,7 @@ Router.get('/addArticle',indexContro.addArticle)
 Router.post('/addArticleData',loadArti.single('file'),indexContro.addArticleData)
 
 // 添加文章 接口
-// Router.post('/upCate',cateContro.upCate)
+Router.post('/upCate',cateContro.upCate)
 
 // 文章分类 搜索 接口
 Router.get('/inCate',cateContro.inCate)

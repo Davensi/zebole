@@ -53,9 +53,9 @@ cateContro.getCategory = async (req, res) => {
     let data2 = await query(sql1);
     let count = data2[0]['count(*)'];
     let sql2;
-    if(req.query?.page){
+    if(!req.query?.page){
         
-        sql2 = `SELECT * FROM category WHERE status = 0 `;
+        sql2 = `SELECT * FROM category WHERE status = 0`;
     }else{
         sql2 = `SELECT * FROM category WHERE status = 0 limit ${pageS},${limit}`;
     }

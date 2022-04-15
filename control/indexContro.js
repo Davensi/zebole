@@ -138,31 +138,12 @@ indexContro.getArticle = async (req, res) => {
 }
 //   验证是否翻墙的路由
 // session
-indexContro.isUsers = (req, res, next) => {
-       // let _path = ['/up-login', '/login'];
-       // let { url } = req;
-       // log(url, 'path');
-       // if (_path.includes(url)) {
-       //        //     log('无需验证');
-       next();
-       // } else {
-
-       //        if (req.session.userInfo) {
-       //               //  log('有凭证')
-       //               next();
-       //        } else {
-       //               res.redirect('/login');
-       //        }
-       // }
-
-
-
-}
 
 // 统计文章的 总数  addUpcate
 indexContro.addUpcate = async (req, res, next) => {
        // 将 数据 处理 返回
-       let sql = ` SELECT t2.cate_name,count(t1.id)  from article t1 LEFT JOIN category t2 ON t1.cate_id = t2.cate_id GROUP BY t2.cate_name ORDER BY  count(t1.id) desc`;
+       // let sql = ` SELECT t2.cate_name,count(t1.id)  from article t1 LEFT JOIN category t2 ON t1.cate_id = t2.cate_id GROUP BY t2.cate_name ORDER BY  (t1.id) desc`;
+       let sql = ` SELECT t2.cate_name,count(t1.id)  from article t1 LEFT JOIN category t2 ON t1.cate_id = t2.cate_id GROUP BY t2.cate_name ORDER BY  (t1.id) desc`;
        let data = await query(sql);
        console.log(data, 'data');
        res.send(data)

@@ -42,7 +42,7 @@
                 <section>
                     <label>
                         <p>用户名</p>
-                        <input type="text" placeholder="Username" autocomplete="off"  value="max123" name="username"
+                        <input type="text" placeholder="Username" autocomplete="off"  value="admin" name="username"
                             placeholder="Username" />
                         <div class="border"></div>
                     </label>
@@ -126,12 +126,12 @@
     let formData = new FormData(form)
     console.log(formData);
     let msg = false;
-    if (!userReg.test(formData.get('username'))) {
-        layer.msg('正确的账号格式');
+    // if (!userReg.test(formData.get('username'))) {
+    //     layer.msg('正确的账号格式');
 
-    } else if (!passwordTestReg.test(formData.get('password'))) {
-        layer.msg('正确的密码格式');
-    } else {
+    // } else if (!passwordTestReg.test(formData.get('password'))) {
+    //     layer.msg('正确的密码格式');
+    // } else {
         $.ajax({
             type: "post",
             url: "/up-login",
@@ -148,12 +148,12 @@
                 
                 Cookies.set('userInfo',JSON.stringify(res.dataS), { expires: 1, path: '/' })
 
-                location.href = '/'
+                location.href = '/';
             };
             layer.msg(res.msg);
         })
 
-    }
+    // }
 
     return false;
 });

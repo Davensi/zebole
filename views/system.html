@@ -31,9 +31,23 @@
       </div>
     </div>
 
-    <div class="layui-footer">
-      <!-- 底部固定区域 -->
-      底部固定区域
+    <div class="layui-form-item" id="upload" style="display: none;">
+      <div class="layui-inline">
+
+        <label class="layui-form-label">上传图片</label>
+        <div class="layui-input-inline">
+          <form action="" id="form">
+            <input style=" display: none;" type="file" name="file" lay-verify="file" autocomplete="off"
+              onchange="fileChange(this,'#demo1')">
+            <a class="layui-btn layui-btn-normal" id="upBtn">+ 上传图片</a>
+            <br>
+            <img class="layui-upload-img" style="width: 100px;" id="demo1">
+            <br>
+            <a class="layui-btn layui-btn-normal" id="load">上传</a>
+          </form>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -43,7 +57,7 @@
   <!-- 单元格工具 -->
   <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">选中条目</button>
+    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">编辑 log</button>
     <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
     <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
     <button class="layui-btn layui-btn-sm" lay-event="addTiem">点我添加数据</button>
@@ -116,91 +130,124 @@
               return '<em>' + res.val + '</em>';
             }
           }
-        , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+          , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
 
         ]]
         , page: true
       });
-    let active = {
-      reload: function () {
-        var demoReload = $('#demoReload');
-        console.log(demoReload.val());
-        //执行重载
-        table.reload('test', {
-          url: "/inSystem",
-          page: {
-            curr: 1 //重新从第 1 页开始
-          }
-          , where: {
-            'id': demoReload.val(),
-            'name': demoReload.val(),
-            'val': demoReload.val(),
-             
-          }
-        });
-      }
-    };
+      let active = {
+        reload: function () {
+          var demoReload = $('#demoReload');
+          console.log(demoReload.val());
+          //执行重载
+          table.reload('test', {
+            url: "/inSystem",
+            page: {
+              curr: 1 //重新从第 1 页开始
+            }
+            , where: {
+              'id': demoReload.val(),
+              'name': demoReload.val(),
+              'val': demoReload.val(),
 
-
-    $('.demoTable .layui-btn').on('click', function () {
-      var type = $(this).data('type');
-      active[type] ? active[type].call(this) : '';
-      console.log(active, 'active');
-    });
-    //头工具栏事件
-    table.on('toolbar(test)', function (obj) {  
-      var checkStatus = table.checkStatus(obj.config.id);
-      switch (obj.event) {
-        case 'getCheckData':
-          var data = checkStatus.data;
-           
-          break;
-        case 'getCheckLength':
-          var data = checkStatus.data;
-          layer.msg('选中了：' + data.length + ' 个');
-          break;
-        case 'isAll':
-          layer.msg(checkStatus.isAll ? '全选' : '未全选');
-       
-          break;
-        //自定义头工具栏右侧图标 - 提示
-        case 'addTiem':
-          layer.msg('追加配置');
-          location.href='/addSystem'
-          break;
-        case 'LAYTABLE_TIPS':
-          layer.alert('这是工具栏右侧自定义的一个图标按钮');
-          break;
+            }
+          });
+        }
       };
+
+
+      $('.demoTable .layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+        console.log(active, 'active');
+      });
+      $("#upBtn").click(function () {
+        console.log(666);
+        $('input[name=file]').click();
+        return false
+      })
+
+      // 上传 log 图片 
+      $("#load").click(function () {
+        console.log(666);
+        let formData = new FormData($('#form')[0]);
+        $.ajax({
+          type: "post",
+          url: "/logDditPic",
+          processData: false, //  jquery不需要处理数据
+          contentType: false, // 不要设置编码
+          data: formData,
+        }).then(res=>{
+          console.log(res);
+        })
+        //  logDditPic
+
+        // console.log(from);
+        return false
+      })
+      //头工具栏事件
+      table.on('toolbar(test)', function (obj) {
+        var checkStatus = table.checkStatus(obj.config.id);
+        switch (obj.event) {
+          case 'getCheckData':
+            var data = checkStatus.data;
+            //页面层-自定义
+
+            layer.open({
+              type: 1,
+              title: false,
+              closeBtn: 0,
+              shadeClose: true,
+              skin: 'yourclass',
+              content: $('#upload')
+            });
+            break;
+          case 'getCheckLength':
+            var data = checkStatus.data;
+            layer.msg('选中了：' + data.length + ' 个');
+            break;
+          case 'isAll':
+            layer.msg(checkStatus.isAll ? '全选' : '未全选');
+
+            break;
+          //自定义头工具栏右侧图标 - 提示
+          case 'addTiem':
+            layer.msg('追加配置');
+            location.href = '/addSystem'
+            break;
+          case 'LAYTABLE_TIPS':
+            layer.alert('这是工具栏右侧自定义的一个图标按钮');
+            break;
+        };
+      });
+
+      // 监听行工具事件
+      table.on('tool(test)', function (obj) {
+        var data = obj.data;
+        let id = data.id;
+
+        if (obj.event === 'del') {
+          layer.confirm('真的删除行么', function (index) {
+            obj.del();
+
+            $.get('/DelSystem', { id }).then(res => { console.log(res); })
+            table.reload('test')
+            layer.close(index);
+          });
+        }
+      });
+      // 单元格编辑
+      table.on('edit(test)', function (obj) {
+        let { data, value, field } = obj;
+        let { id, } = data;
+        console.log(obj);
+        console.log(id, 'id');
+        $.get('/alterSys', data).then(res => { console.log(res); })
+        layer.msg('[ID: ' + 'cate_id' + '] ' + field + ' 字段更改值为：' + value);
+
+      });
     });
 
-    // 监听行工具事件
-    table.on('tool(test)', function (obj) {
-      var data = obj.data;
-      let id = data.id;
-
-      if (obj.event === 'del') {
-        layer.confirm('真的删除行么', function (index) {
-          obj.del();
-         
-          $.get('/DelSystem', { id }).then(res => { console.log(res); })
-          table.reload('test')
-          layer.close(index);
-        });
-      }
-    });
-    // 单元格编辑
-    table.on('edit(test)', function (obj) {
-      let { data, value, field } = obj;
-      let { id, } = data;
-      console.log(obj);
-      console.log(id, 'id');
-      $.get('/alterSys', data ).then(res => { console.log(res); })
-      layer.msg('[ID: ' + 'cate_id' + '] ' + field + ' 字段更改值为：' + value);
-
-    });
-    });
-    
 
   </script>
 </body>

@@ -24,6 +24,7 @@ indexContro.article = (req, res) => {
        // res.render(('articleList.html'))
        templateViews(res, 'articleList.html')
 }
+// 文章 修改 页
 indexContro.editArticle = (req, res) => {
        // res.render(('articleList.html'))
        templateViews(res, 'editArticle.html')
@@ -32,13 +33,13 @@ indexContro.editArticle = (req, res) => {
 // 删除 文章接口
 indexContro.DelArticle = async (req, res) => {
 
-       let imgPath  = path.dirname(__dirname);
-       let { id,pic} = req.query;
-       
-       if(pic){
+       let imgPath = path.dirname(__dirname);
+       let { id, pic } = req.query;
+
+       if (pic) {
               console.log('删除 一个 对 应 的文件');
-              fs.unlink(path.join(imgPath,pic),(err)=>{
-                     if(err) throw err;
+              fs.unlink(path.join(imgPath, pic), (err) => {
+                     if (err) throw err;
                      console.log('删除成功·。。。。');
               })
               // console.log(path.join(imgPath,pic),'path');
@@ -56,18 +57,18 @@ indexContro.editArticleData = async (req, res) => {
 
        let { add_date, author, contro, content, status, title, id, pic } = req.body;
        status = status == 'on' ? 1 : 0;
-        
+
        id = parseInt(id);
        console.log(req.body);
        // 等待处理 sql 语句
        // 判断是否 更改了图片
-        // 上一级 路径
-        const imgDirname = `${path.dirname(__dirname)}`;
-        // 头像 所在 的 路径
-        const imgPath = `/static/arti/`;
+       // 上一级 路径
+       const imgDirname = `${path.dirname(__dirname)}`;
+       // 头像 所在 的 路径
+       const imgPath = `/static/arti/`;
 
-        
-              
+
+
        if (req.file) {
               console.log('传了');
               let { originalname, filename, destination } = req.file;
@@ -76,20 +77,20 @@ indexContro.editArticleData = async (req, res) => {
                      if (err) console.log(err, 'on');
                      console.log('ok');
               });
-             
-              if(!contro){
+
+              if (!contro) {
                      log('我服了')
                      fs.unlink(path.join(`${imgDirname}/${pic}`), (err, data) => {
                             if (err) throw err;
-       
+
                             log('删除成功')
                      })
               }
-              
-           pic = imgPath + originalname; 
+
+              pic = imgPath + originalname;
        }
        let sql = `UPDATE article set title = '${title}' , content = '${content}' , status = ${status} , pic = '${pic}'  WHERE  id = ${id}  `
-     
+
        await query(sql);
        res.send('yes')
 }
@@ -136,8 +137,7 @@ indexContro.getArticle = async (req, res) => {
        }
        res.json(obj)
 }
-//   验证是否翻墙的路由
-// session
+
 
 // 统计文章的 总数  addUpcate
 indexContro.addUpcate = async (req, res, next) => {
@@ -187,8 +187,21 @@ indexContro.addArticleData = async (req, res) => {
        rows(data, res)
 
 }
+// 页面 数据 回显  编辑
 
+indexContro.getArtiData = async (req, res) => {
+       let { id } = req.query;
+       let sqlStr = `SELECT * FROM article where id = ${id}`;
+       let data = await query(sqlStr);
+       let obj = {
+              
+              data,
+              "code": 0,
+              "msg": "",
 
+       }
+       res.json(obj)
+}
 
 
 module.exports = indexContro;

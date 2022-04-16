@@ -1,5 +1,5 @@
 <div class="layui-header">
-  <div class="layui-logo layui-hide-xs layui-bg-black">{{logTest}}</div>
+  <div class="layui-logo layui-hide-xs layui-bg-black" ><img style="width: 30px; border-radius: 50%;" src="{{pic}}" alt="">  {{logTest}}</div>
   <!-- 头部区域（可配合layui 已有的水平导航） -->
   <ul class="layui-nav layui-layout-left">
     <!-- 移动端显示 -->
@@ -104,7 +104,7 @@
       // console.log(imgba64);
       $(ele).attr('src', imgba64);
       console.log($(ele));
-      // console.log(upFile.name);
+      // console.log(upFile.name); 
       newPic = `${upFile.name}`
       // console.log(_newPic, 'pic');
 

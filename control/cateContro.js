@@ -38,7 +38,7 @@ cateContro.DelCategory = async (req, res) => {
 }
 // 获取分类页数据
 cateContro.getCategory = async (req, res) => {
-    let { limit, page } = req.query;
+    let { limit=5, page=1 } = req.query;
     let pageS = (page - 1) * limit;
     
    

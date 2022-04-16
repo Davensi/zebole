@@ -2,15 +2,20 @@
 const PORT = 4000;
 // 导入路由
 const ROUTER = require('./router/router')
+const homeROUTER = require('./router/homeRouter')
 // 导入  express 框架 
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const session = require('express-session')
 const artTemplate = require('art-template');
 const express_template = require('express-art-template');
  
  
 const app = express();
+
+
+
 // 托管静态 资源 
 app.use('/static', express.static('static/'));
 // 
@@ -39,8 +44,11 @@ app.use(session({
     maxAge: 60000 * 60,
   }
 }));
-app.use(ROUTER);
 
+app.use('/api',homeROUTER);
+
+app.use(ROUTER);
+ 
 
 require('dotenv').config('.env');
 // console.log( process.env);

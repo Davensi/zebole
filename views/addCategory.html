@@ -18,23 +18,32 @@
         <div class="layui-body">
             <!-- 内容主体区域 -->
             <div style="padding: 15px;">
-                添加文本 配置
+                添加分类
 
                 <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">分类名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入类名"
+                                class="layui-input">
+                        </div>
+                    </div>
+
+                   
 
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">名字</label>
+                            <label class="layui-form-label">状态</label>
                             <div class="layui-input-inline">
-                                <input type="tel" name="name" lay-verify="required" autocomplete="off"
-                                    class="layui-input" placeholder="请输入名字">
+                                <input type="tel" name="status" lay-verify="required" autocomplete="off"
+                                    class="layui-input" placeholder="请输入状态">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">值</label>
+                            <label class="layui-form-label">排序</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="val" lay-verify="val" autocomplete="off" class="layui-input"
-                                    placeholder="请输入值">
+                                <input type="text" name="orderBy" lay-verify="orderBy" autocomplete="off"
+                                    class="layui-input" placeholder="请输入排序">
                             </div>
                         </div>
                     </div>
@@ -46,7 +55,6 @@
                         </div>
                     </div>
                 </form>
-
 
             </div>
         </div>
@@ -71,41 +79,47 @@
                 , laydate = layui.laydate
                 , $ = layui.jquery;
 
+
+
+
             //创建一个编辑器
             var editIndex = layedit.build('LAY_demo_editor');
             //自定义验证规则
             form.verify({
-
-                //    /^[\w]$/
-                required: [
-                    /^[a-zA-z]+[\w]{2,16}$/g
-                    , '名字只能以英文_命名'
-                ]
-                , val: function (value) {
-                    if (value.length < 1) {
-                        return '值至少得1个字符';
+                title: function (value) {
+                    if (value.length < 2) {
+                        return '标题至少得2个字符';
                     }
                 }
+                , required: [
+                    /^[0-1]$/
+                    , '状态只能0|1 代表是否上线'
+                ]
+                , orderBy: [
+                    /^[1-9]+$/
+                    , '排序必须是一个数字不能以0开头'
+                ]
             });
 
 
 
             //监听提交
             form.on('submit(demo1)', function (data) {
+
                 let { field } = data;
                 layer.alert(JSON.stringify(data.field), {
                     title: '最终的提交信息'
                 });
-                console.log(field,'field');
                 $.ajax({
-                    url: "/upSystem",
+                    url: "/upCate",
                     type: 'post',
                     data: field,
                 }).then(res => {
                     console.log(res);
                     if (res.code == 0) {
-
+                        location.href='/categoryAlter';
                     }
+                    
                 })
 
                 return false;

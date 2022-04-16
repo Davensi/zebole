@@ -84,8 +84,35 @@ systemContro.inSystem = async (req, res) => {
         msg: "ok",
         count: 1,
     })
-  
 
-    
+
+
+}
+// log 修改页
+systemContro.logDdit = async (req, res) => {
+
+
+}
+// log 修改 接口 
+systemContro.logDditPic = async (req, res) => {
+    const imgPath = `/static/logPic/`;
+    const imgDirname = `${path.dirname(__dirname)}`;
+
+    let { originalname, filename, destination } = req.file;
+    // 重命名文件
+
+    fs.rename(path.join(`${imgDirname}${imgPath}${filename}`), path.join(`${imgDirname}${imgPath}${originalname}`), (err) => {
+        if (err) console.log(err, 'on');
+        console.log('ok');
+
+    });
+    pic = imgPath + originalname;
+    console.log(pic, 'pic');
+    const sqlStr = `UPDATE system set  val = '${pic}' WHERE name = 'pic'`;
+    let data = await query(sqlStr);
+    log(req.query, 'data')
+    // 判断 操作 是否成功
+    rows(data, res)
+
 }
 module.exports = systemContro;

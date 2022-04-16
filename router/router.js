@@ -25,6 +25,9 @@ const upload = multer({
 const loadArti = multer({ 
     dest: './static/arti' 
 })
+const logPic = multer({ 
+    dest: './static/logPic' 
+})
  
 
  
@@ -47,6 +50,8 @@ Router.get('/DelArticle',indexContro.DelArticle)
 Router.post('/editArticleData', loadArti.single('file'),indexContro.editArticleData)
 // 获取 文章的 总数 
 Router.get('/addUpcate', indexContro.addUpcate)
+// 修改 文章 数据 回显
+Router.get('/getArtiData', indexContro.getArtiData)
 
 // 登录页
 Router.get('/login',userContro.login)
@@ -108,6 +113,8 @@ Router.get('/addSystem',systemContro.addSystem)
 
 // 添加 配置页 接口
 Router.post('/upSystem',systemContro.upSystem)
+// 添加 配置  log 操作 
+Router.post('/logDditPic',logPic.single('file'),systemContro.logDditPic)
 
 // 配置 删除页  接口
 Router.get('/DelSystem',systemContro.DelSystem)
@@ -116,6 +123,8 @@ Router.get('/DelSystem',systemContro.DelSystem)
 Router.get('/inSystem',systemContro.inSystem)
 
 // 修改  文章分类 表 
-Router.get('/categoryAlter',cateContro.categoryAlter)
+Router.get('/categoryAlter', cateContro.categoryAlter)
+// 获取 文章 所有的 分类
+
 
 module.exports = Router;

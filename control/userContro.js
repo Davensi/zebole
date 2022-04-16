@@ -12,7 +12,7 @@ const { log } = require('console');
 
 // 防翻墙
 userContro.isUsers = (req, res, next) => {
-       let _path = ['/up-login', '/login'];
+       let _path = ['/up-login', '/login','/api'];
        let { url } = req;
        log(url, 'path');
        if (_path.includes(url)) {

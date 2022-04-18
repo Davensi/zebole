@@ -10,7 +10,7 @@ const homeLocal = 'http://127.0.0.1:4000'
 
 // 获取 所有 数据
 homeContro.getAite = async (req, res) => {
-    log('查数据111');
+    log('获取所有数据');
     let { limit = 1, page = 1 } = req.query;
     const pageS = (page - 1) * limit;
     let sqlStr = `SELECT t1.*,t2.cate_name,t3.username FROM article t1 left JOIN category t2 on t1.cate_id = t2.cate_id
@@ -19,7 +19,7 @@ homeContro.getAite = async (req, res) => {
 
     let data = await query(sqlStr);
 
-    console.log(data);
+    console.log(data, 'data');
     res.json({
         data,
         homeLocal
@@ -28,15 +28,17 @@ homeContro.getAite = async (req, res) => {
 }
 // 获取 所有 分类 内容
 homeContro.getCategoby = async (req, res) => {
-    log('查数据');
+    log('所有分类');
     let { cate_id, limit = 2, page = 1 } = req.query;
+    log(limit, page, 'll')
+    log(req.query, 'query')
     const pageS = (page - 1) * limit;
-    console.log(cate_id, 'idd');
+    console.log(cate_id, 'id');
     let sql = `SELECT  t1.*,t2.cate_name FROM article t1 LEFT JOIN category t2 ON t1.cate_id = t2.cate_id  WHERE t2.cate_id= ${cate_id} 
     limit ${pageS},${limit}
     `
     let data = await query(sql);
-
+    console.log(data, 'dataaa');
 
     res.json({
         data,
@@ -45,7 +47,7 @@ homeContro.getCategoby = async (req, res) => {
 }
 // 获取 指定 内容
 homeContro.geTitemAite = async (req, res) => {
-    log('查数据');
+    log('详情页');
     let { id } = req.query;
     id = parseInt(id);
     console.log(id, 'id');
@@ -60,7 +62,7 @@ WHERE
 	t1.id = ${id}`;
 
     let data = await query(sqlStr);
-   
+
     res.json({
         data,
         homeLocal

@@ -123,7 +123,7 @@
                     , { field: 'content', title: '内容', width: 120, edit: 'false', }
                     , { field: 'username', title: '发布者', width: 120, edit: 'false', }
                     , { field: 'status', title: '状态', width: 120, edit: 'false', templet: function ({ status }) {
-                        status = status === 0 ? '审核通过' : '未通过'
+                        status = status === 0 ? '未通过' : '审核通过'
                         return status;
                     } }
                     , { field: 'add_date', title: '添加日期', width: 120, edit: 'false', }

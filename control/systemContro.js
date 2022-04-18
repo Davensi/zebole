@@ -95,8 +95,7 @@ systemContro.logDdit = async (req, res) => {
 }
 // log 修改 接口 
 systemContro.logDditPic = async (req, res) => {
-    const imgPath = `/static/logPic/`;
-    const imgDirname = `${path.dirname(__dirname)}`;
+   
 
     let { originalname, filename, destination } = req.file;
     // 重命名文件
